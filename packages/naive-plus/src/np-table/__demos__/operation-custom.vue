@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { ref } from 'vue'
 import { NAlert } from 'naive-ui'
 import type { TableOption } from 'naive-plus'
@@ -42,7 +42,7 @@ const option: TableOption<User> = {
       { type: 'edit' },
       { type: 'del', label: '删除(危险)' },
       { key: 'detail', label: '详情' },
-      { key: 'export', label: '导出' },
+      { key: 'export', label: () => <span style="color: red">导出</span> },
     ],
     // 处理自定义选项的点击事件，内置 edit/delete 会优先触发 onBefore，不经过此回调
     onSelect: key => {

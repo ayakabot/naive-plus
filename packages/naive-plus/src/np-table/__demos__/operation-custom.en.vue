@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { ref } from 'vue'
 import { NAlert } from 'naive-ui'
 import type { TableOption } from 'naive-plus'
@@ -42,7 +42,7 @@ const option: TableOption<User> = {
       { type: 'edit' },
       { type: 'del', label: 'Delete (Danger)' },
       { key: 'detail', label: 'Detail' },
-      { key: 'export', label: 'Export' },
+      { key: 'export', label: () => <span style="color: red">Export</span> },
     ],
     // handle click on custom options; built-in edit/delete first trigger onBefore and bypass this callback
     onSelect: key => {

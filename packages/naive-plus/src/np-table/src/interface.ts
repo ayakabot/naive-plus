@@ -90,7 +90,7 @@ export interface TableOption<T extends AnyObject = AnyObject> {
         suffixRender?: (rowData: T, rowIndex: number) => VNode
 
         options?: TableOperationOption[]
-        onSelect?: (key: string) => void | boolean
+        onSelect?: (key: string, rowData: T, rowIndex: number) => void | boolean
 
         onBefore?: (
           rowData: T,

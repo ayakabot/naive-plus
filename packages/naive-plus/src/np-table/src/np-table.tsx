@@ -182,7 +182,7 @@ export default defineComponent({
                   } else if (key === 'delete') {
                     openAction('del', rowData)
                   } else {
-                    operation.onSelect?.(key)
+                    operation.onSelect?.(key, rowData, rowIndex)
                   }
                 }}
               />
