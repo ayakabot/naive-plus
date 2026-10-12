@@ -48,6 +48,7 @@ export const zh: SidebarConfig = {
         { text: '筛选功能', link: '/table/filter/' },
         { text: '多选功能', link: '/table/selection/' },
         { text: '插槽', link: '/table/slot/' },
+        { text: '主动方法', link: '/table/expose/' },
       ],
     },
   ],

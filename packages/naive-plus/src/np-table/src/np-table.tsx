@@ -28,13 +28,17 @@ const { name, bemClass } = useCreate('np-table')
 export default defineComponent({
   name,
   props: npTableProps,
-  setup(props, { slots }) {
+  setup(props, { expose, slots }) {
     const loading = ref(false)
     const page = ref(1)
     const pageSize = ref((props.option.pagination || {}).defaultPageSize || 10)
     const itemCount = ref(0)
     const data = ref<any[]>([])
     const queryParams = ref<Record<string, any>>({})
+    /**
+     * 外部绑定的查询参数，会与筛选参数合并后传递给 api.fetch
+     */
+    const params = ref<Record<string, any>>({})
     /**
      * 表格 columns
      */
@@ -52,7 +56,7 @@ export default defineComponent({
       try {
         const result = await props.option.api.fetch(
           { page: page.value, pageSize: pageSize.value },
-          queryParams.value
+          { ...queryParams.value, ...params.value }
         )
         data.value = result.items || []
         if (result.itemCount !== undefined) {
@@ -61,6 +65,19 @@ export default defineComponent({
       } finally {
         loading.value = false
       }
+    }
+
+    /**
+     * 重新刷新当前页数据
+     */
+    const refresh = () => fetchData()
+
+    /**
+     * 重新加载数据，会重置到第一页
+     */
+    const reload = () => {
+      page.value = 1
+      return fetchData()
     }
 
     const resetColumn = () => {
@@ -91,6 +108,8 @@ export default defineComponent({
       resetColumn()
       fetchData()
     })
+
+    expose({ reload, refresh, params })
 
     const pagination = computed<PaginationProps | false>(() => {
       if (props.option.pagination === false) {

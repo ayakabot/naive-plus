@@ -20,12 +20,22 @@ permalink: /table/base/
 | ------ | -------- | --------------------------- | ------ |
 | option | 配置参数 | [TableOption](#tableoption) | -      |
 
+### Methods
+
+通过 `ref` 获取表格实例后，可调用以下主动方法，详见 [主动方法](/table/expose/)。
+
+| 方法    | 说明                                                       | 类型                    |
+| ------- | ---------------------------------------------------------- | ----------------------- |
+| reload  | 重新加载数据，会重置到第一页                               | `() => Promise<void>`   |
+| refresh | 重新刷新当前页数据                                         | `() => Promise<void>`   |
+| params  | 绑定的查询参数，会作为 `queryParams` 传递给 `api.fetch`    | `Record<string, any>`   |
+
 ## 类型定义
 
 组件导出以下类型定义
 
 ```ts
-import type { TableOption, TableColumn, TableFilter } from 'naive-plus'
+import type { TableOption, TableColumn, TableFilter, NpTableInst } from 'naive-plus'
 ```
 
 ### TableOption

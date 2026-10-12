@@ -67,6 +67,21 @@ export interface TableSlotOption {
   footerLeft?: () => VNodeChild
 }
 
+export interface NpTableInst {
+  /**
+   * 重新加载数据，会重置到第一页
+   */
+  reload: () => Promise<void>
+  /**
+   * 重新刷新当前页数据
+   */
+  refresh: () => Promise<void>
+  /**
+   * 绑定的查询参数，会作为 `queryParams` 传递给 `option.api.fetch`
+   */
+  params: Record<string, any>
+}
+
 export interface TableOption<T extends AnyObject = AnyObject> {
   api: {
     fetch: (

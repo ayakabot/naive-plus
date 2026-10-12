@@ -48,6 +48,7 @@ export const en: SidebarConfig = {
         { text: 'Filter', link: '/en/table/filter/' },
         { text: 'Selection', link: '/en/table/selection/' },
         { text: 'Slots', link: '/en/table/slot/' },
+        { text: 'Imperative Methods', link: '/en/table/expose/' },
       ],
     },
   ],
