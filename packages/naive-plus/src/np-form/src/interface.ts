@@ -319,6 +319,13 @@ export interface FormOption<FormData extends AnyObject = AnyObject> {
         prefixRender?: (data: FormData) => VNode
         suffixRender?: (data: FormData) => VNode
         /**
+         * 底部内容对齐方式
+         * - `'left'`: 靠左对齐
+         * - `'right'`: 靠右对齐，校验反馈信息同步靠右
+         * @defaultValue left
+         */
+        align?: 'left' | 'right'
+        /**
          * 提交（onSubmit）异常时，是否将错误信息展示在底部表单项的校验反馈中
          * @defaultValue true
          */

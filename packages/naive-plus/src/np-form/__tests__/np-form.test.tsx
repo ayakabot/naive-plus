@@ -142,4 +142,46 @@ describe('NpForm', () => {
     await nextTick()
     expect(wrapper.text()).not.toContain('提交失败啦')
   })
+
+  test('footer align defaults to left', async () => {
+    const option: FormOption<Record<string, any>> = {
+      columns: [{ label: '姓名', key: 'fullName' }],
+    }
+    const wrapper = mount(NpForm, { props: { option } })
+    await nextTick()
+
+    const footer = wrapper.find('.np-form__footer')
+    expect((footer.element as HTMLElement).style.justifyContent).toBe(
+      'flex-start'
+    )
+  })
+
+  test('footer align right aligns content and feedback to the end', async () => {
+    const option: FormOption<Record<string, any>> = {
+      columns: [{ label: '姓名', key: 'fullName' }],
+      footer: { align: 'right' },
+      onSubmit: () => {
+        throw new Error('提交失败啦')
+      },
+    }
+    const wrapper = mount(NpForm, { props: { option } })
+    await nextTick()
+
+    const footer = wrapper.find('.np-form__footer')
+    expect((footer.element as HTMLElement).style.justifyContent).toBe(
+      'flex-end'
+    )
+
+    const submitButton = wrapper
+      .findAll('button')
+      .find(button => button.text() === '提交')
+    await submitButton?.trigger('click')
+    await flushPromises()
+    await nextTick()
+
+    const feedbackWrappers = wrapper.findAll('.n-form-item-feedback-wrapper')
+    expect(
+      feedbackWrappers[feedbackWrappers.length - 1].attributes('style')
+    ).toContain('text-align: end')
+  })
 })

@@ -215,26 +215,42 @@ export default defineComponent({
         submitBtn = {},
         resetBtn = {},
         style = {},
+        align = 'left',
+        formItemProps,
       } = props.option.footer || {}
+
+      const isAlignRight = align === 'right'
 
       const defaultStyle: StyleValue = {
         width: '100%',
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: isAlignRight ? 'row-reverse' : 'row',
+        justifyContent: isAlignRight ? 'end' : 'start',
         alignItems: 'center',
         gap: '16px',
         ...style,
       }
 
+      /** 右对齐时校验反馈信息同步靠右 */
+      const feedbackStyle = isAlignRight
+        ? {
+            textAlign: 'end' as const,
+            ...(typeof formItemProps?.feedbackStyle === 'object'
+              ? formItemProps.feedbackStyle
+              : undefined),
+          }
+        : formItemProps?.feedbackStyle
+
       return (
         <NFormItem
           label=" "
           show-label={props.option.props?.labelPlacement === 'left'}
-          {...props.option.footer?.formItemProps}
+          {...formItemProps}
+          feedbackStyle={feedbackStyle}
           feedback={footerFeedback.value}
           validationStatus={footerValidationStatus.value}
         >
-          <div style={defaultStyle}>
+          <div class={`${bemClass.value}__footer`} style={defaultStyle}>
             {isFunction(prefixRender) ? prefixRender(data.value) : undefined}
             {submitBtn ? (
               <NpButton
