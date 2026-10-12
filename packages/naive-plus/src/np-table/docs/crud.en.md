@@ -41,6 +41,8 @@ formProps?: Partial<FormColumn> & {
 }
 ```
 
+`formProps.display` accepts a `boolean` or `(data) => boolean` to control the visibility of the form field. See [Display Control](/en/table/display/).
+
 ### operation.onBefore
 
 ```ts

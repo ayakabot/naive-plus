@@ -22,9 +22,24 @@ export type NTableColumnExt = NTableColumn & {
 export type TableColumn<T extends AnyObject = AnyObject> = {
   key: string
   label: string
+  /**
+   * 自定义表格渲染
+   * @param rowData 行数据
+   * @param rowIndex 行序号
+   * @returns VNode
+   */
   render?: (rowData: any, rowIndex: number) => VNode
+  /**
+   * Naive Table Column Props 属性
+   */
   props?: Omit<NTableColumn<T>, 'key' | 'title' | 'render' | 'type'>
+  /**
+   * 显隐
+   */
   display?: boolean
+  /**
+   * 表单额外属性
+   */
   formProps?: Partial<FormColumn<T>> & {
     addProps?: Partial<FormColumn<T>>
     editProps?: Partial<FormColumn<T>>

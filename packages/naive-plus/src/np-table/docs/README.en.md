@@ -58,4 +58,5 @@ import type { TableOption, TableColumn, TableFilter, NpTableInst } from 'naive-p
 | label   | Column title                                                   | string                          | -       |
 | render  | Custom render function                                         | `(rowData, rowIndex) => VNode`  | -       |
 | props   | Column props passed through to `n-data-table` (e.g. `width`, `minWidth`, `fixed`) | object                          | -       |
-| display | Whether to display the column                                  | boolean                         | true    |
+| display | Whether to display the column in the table; `false` hides it entirely (often for form-only fields) | boolean                         | true    |
+| formProps | Form field config, see [CRUD](/en/table/crud/#formprops)         | object                          | -       |
