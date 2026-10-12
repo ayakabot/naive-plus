@@ -148,11 +148,11 @@ export default defineComponent({
         if (isObject(props.option.selection)) {
           selectionColumn = {
             type: 'selection',
-            key: '__selection',
+            key: '__np_table_selection',
             ...props.option.selection,
           }
         } else {
-          selectionColumn = { type: 'selection', key: '__selection' }
+          selectionColumn = { type: 'selection', key: '__np_table_selection' }
         }
         list.splice(0, 0, selectionColumn)
       }
@@ -164,10 +164,10 @@ export default defineComponent({
         delete operation.onBefore
 
         list.push({
+          width: 80,
           ...operation,
           title: operation.label ?? '',
-          width: 80,
-          key: '__operation',
+          key: '__np_table_operation',
           render(rowData, rowIndex) {
             return (
               <NpTableAction

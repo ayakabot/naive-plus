@@ -31,6 +31,8 @@ export type TableColumn<T extends AnyObject = AnyObject> = {
   }
 }
 
+export type TableFilter = NpFilterItem
+
 export type TableOperationOption = DropdownOption & {
   type?: 'edit' | 'del'
 }

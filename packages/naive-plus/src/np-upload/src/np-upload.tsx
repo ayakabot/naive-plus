@@ -116,11 +116,11 @@ export default defineComponent({
     })
 
     const handleCustomRequest = (options: UploadCustomRequestOptions): void => {
-      if (props.props?.action === undefined) {
-        return
-      }
       if (props.props?.customRequest !== undefined) {
         props.props.customRequest(options)
+        return
+      }
+      if (props.props?.action === undefined) {
         return
       }
       customRequest(options, props.props)

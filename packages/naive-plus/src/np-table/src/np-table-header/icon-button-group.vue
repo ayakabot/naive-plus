@@ -56,7 +56,15 @@
 
 <script setup lang="tsx">
 import { computed, ref } from 'vue'
-import { NButton, NSwitch, NIcon, useMessage, NPopover } from 'naive-ui'
+import {
+  NBadge,
+  NButton,
+  NSwitch,
+  NIcon,
+  useMessage,
+  NPopover,
+  type MessageApi,
+} from 'naive-ui'
 import type { NTableColumnExt } from '../interface'
 import { NpFilter, type NpFilterItem } from '../../../np-filter'
 import FilterIcon from '../icon/filter.vue'
@@ -76,6 +84,12 @@ const emit = defineEmits<{
 
 const bemClass = 'np-table__header-right'
 
+// 外层可能未提供 NMessageProvider，此时 useMessage 会抛错，提示功能降级为静默
+let message: MessageApi | undefined
+try {
+  message = useMessage()
+} catch {}
+
 const filterValue = ref<Record<string, any>>({})
 
 const handleFilterParamsChange = (params: Record<string, any>) => {
@@ -90,10 +104,7 @@ const handleColumnDisplay = (key: string, val: boolean) => {
   const displayCount = props.columns.filter(col => col.display !== false).length
   if (displayCount === 1 && !val) {
     // 最后一个显示的列不允许隐藏
-    try {
-      const message = useMessage()
-      message.warning('至少保留一列显示')
-    } catch {}
+    message?.warning('至少保留一列显示')
     return
   }
   props.columns.forEach(col => {

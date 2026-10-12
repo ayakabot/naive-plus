@@ -60,7 +60,7 @@
 import { computed, ref } from 'vue'
 import { useCreate } from '../../_hooks/create'
 import { npFilterProps, type NpFilterItem } from './props'
-import { NPopover, NDivider, type PopoverInst, NScrollbar } from 'naive-ui'
+import { NPopover, NDivider, type PopoverInst } from 'naive-ui'
 import { NpCell } from '../../np-cell'
 import { throttle } from 'lodash-es'
 import FilterItem from './np-filter-item.vue'

@@ -40,13 +40,10 @@ import type { TableOption, TableColumn, TableFilter } from 'naive-plus'
 
 ### TableColumn
 
-| 属性     | 说明           | 类型                                    | 默认值 |
-| -------- | -------------- | --------------------------------------- | ------ |
-| key      | 列字段名称     | string                                  | -      |
-| title    | 列标题         | string / ComputedRef\<string\>          | -      |
-| render   | 自定义渲染函数 | `(rowData, rowIndex) => VNode`          | -      |
-| type     | 列类型         | `'selection'` / `'index'` / `'expand'`  | -      |
-| width    | 列宽度         | string / number                         | -      |
-| minWidth | 列最小宽度     | string / number                         | -      |
-| fixed    | 列固定位置     | `'left'` / `'right'`                    | -      |
-| display  | 列是否显示     | boolean                                 | true   |
+| 属性    | 说明                                                           | 类型                            | 默认值 |
+| ------- | -------------------------------------------------------------- | ------------------------------- | ------ |
+| key     | 列字段名称                                                     | string                          | -      |
+| label   | 列标题                                                         | string                          | -      |
+| render  | 自定义渲染函数                                                 | `(rowData, rowIndex) => VNode`  | -      |
+| props   | 列属性，透传给 `n-data-table`（如 `width`、`minWidth`、`fixed`） | object                          | -      |
+| display | 列是否显示                                                     | boolean                         | true   |

@@ -1,4 +1,5 @@
 import {
+  computed,
   defineComponent,
   getCurrentInstance,
   provide,
@@ -146,6 +147,21 @@ export default defineComponent({
       submit,
     })
 
+    /**
+     * 最后一个实际渲染的表单项索引（跳过 render 列与 display 为 false 的列）
+     * 用于 enterSubmitMode === 'last' 时判断回车是否提交
+     */
+    const lastItemIdx = computed(() => {
+      const columns = props.option.columns || []
+      for (let i = columns.length - 1; i >= 0; i--) {
+        const column = columns[i]
+        if (typeof column.render !== 'function' && column.display !== false) {
+          return i
+        }
+      }
+      return -1
+    })
+
     const footer = () => {
       if (props.option.footer === false) {
         return undefined
@@ -221,7 +237,7 @@ export default defineComponent({
             return (
               <NpFormItem
                 column={column}
-                columnIdx={columnIdx}
+                isLastColumn={columnIdx === lastItemIdx.value}
                 injectKey={injectKey}
               ></NpFormItem>
             )

@@ -41,13 +41,10 @@ import type { TableOption, TableColumn, TableFilter } from 'naive-plus'
 
 ### TableColumn
 
-| Prop | Description | Type | Default |
-| -------- | -------------- | --------------------------------------- | ------ |
-| key      | Column field name     | string                                  | -      |
-| title    | Column title         | string / ComputedRef\<string\>          | -      |
-| render   | Custom render function | `(rowData, rowIndex) => VNode`          | -      |
-| type     | Column type         | `'selection'` / `'index'` / `'expand'`  | -      |
-| width    | Column width         | string / number                         | -      |
-| minWidth | Min column width     | string / number                         | -      |
-| fixed    | Fixed column         | `'left'` / `'right'`                    | -      |
-| display  | Whether to display the column | boolean                                 | true   |
+| Prop    | Description                                                    | Type                            | Default |
+| ------- | -------------------------------------------------------------- | ------------------------------- | ------- |
+| key     | Column field name                                              | string                          | -       |
+| label   | Column title                                                   | string                          | -       |
+| render  | Custom render function                                         | `(rowData, rowIndex) => VNode`  | -       |
+| props   | Column props passed through to `n-data-table` (e.g. `width`, `minWidth`, `fixed`) | object                          | -       |
+| display | Whether to display the column                                  | boolean                         | true    |

@@ -30,9 +30,9 @@ export const npFormItemProps = {
       return {}
     },
   },
-  columnIdx: {
-    type: Number,
-    default: 0,
+  isLastColumn: {
+    type: Boolean,
+    default: false,
   },
   injectKey: {},
 }

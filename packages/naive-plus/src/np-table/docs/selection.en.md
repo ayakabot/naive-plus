@@ -5,7 +5,7 @@ lang: en-US
 
 # np-table Selection
 
-Add `type: 'selection'` to `columns` to enable multi-select, and pass `checkedRowKeys` and `onUpdateCheckedRowKeys` via `option.props` to control the selected state.
+Enable multi-select via `option.selection`, and receive selection changes through `option.selection.onChange`.
 
 > Note: `option` must be defined as a `computed` so that reactive updates of `checkedRowKeys` are synced to the table.
 

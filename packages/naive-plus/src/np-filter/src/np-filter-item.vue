@@ -20,7 +20,8 @@
           :type="item.type"
           @change="handleChange"
         ></NpCellGroup>
-        <NEmpty v-if="groups.length === 0" size="tiny"></NEmpty>
+        <NSpin v-if="loading"></NSpin>
+        <NEmpty v-else-if="groups.length === 0" size="tiny"></NEmpty>
       </div>
     </NScrollbar>
   </div>
@@ -37,7 +38,7 @@ import {
   type NpCellGroupKeys,
   type NpCellGroupOption,
 } from '../../np-cell-group'
-import { NDivider, NEmpty, NInput } from 'naive-ui'
+import { NDivider, NEmpty, NInput, NSpin } from 'naive-ui'
 
 const { bemClass } = useCreate('np-filter-option')
 

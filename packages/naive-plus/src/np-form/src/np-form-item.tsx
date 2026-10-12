@@ -145,8 +145,7 @@ export default defineComponent({
           initRule(newRule)
         })
       } else if (type === 'upload') {
-        rule.value = [uploadBlobRule]
-        initRule([uploadBlobRule])
+        initRule([])
       }
     }
     init(formInj.data.value)
@@ -201,8 +200,7 @@ export default defineComponent({
       if (!enterSubmitMode) {
         return
       }
-      const isLast = formInj.props.option.columns.length - 1 === props.columnIdx
-      if (enterSubmitMode === 'all' || isLast) {
+      if (enterSubmitMode === 'all' || props.isLastColumn) {
         formInj.submit()
       }
     }
