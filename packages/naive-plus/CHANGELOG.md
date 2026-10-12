@@ -1,5 +1,25 @@
 # naive-plus
 
+## 0.1.0-beta.19
+
+### Minor Changes
+
+- [`7b2ee65`](https://github.com/seepine/naive-plus/commit/7b2ee65744656887fcc85bc9e35f1cfaf7267b99) Thanks [@seepine](https://github.com/seepine)! - feat(np-table): support dynamic operation options function
+
+- [`fa510b6`](https://github.com/seepine/naive-plus/commit/fa510b6c4cbee38d51192b78bd22d7544705bb5b) Thanks [@seepine](https://github.com/seepine)! - feat(np-form): show submit error message as the footer form item feedback
+
+- [`c5cebab`](https://github.com/seepine/naive-plus/commit/c5cebab941260f5054314e5168b3b04d58ed9cd6) Thanks [@seepine](https://github.com/seepine)! - feat(np-table): expose reload / refresh methods and params for api.fetch
+
+- [`84676ad`](https://github.com/seepine/naive-plus/commit/84676ad4090f4d3d3b3efed60b127dcbdc29a322) Thanks [@seepine](https://github.com/seepine)! - feat(np-table): support headerLeft / headerRight / footerLeft via option.slots
+
+### Patch Changes
+
+- [`7b6b4bc`](https://github.com/seepine/naive-plus/commit/7b6b4bc2241bd173d970429609c80f0b5fd7e4ff) Thanks [@seepine](https://github.com/seepine)! - feat(np-table): support row data and index in onSelect callback
+
+- [`8de18da`](https://github.com/seepine/naive-plus/commit/8de18da493a1d4212058dd910d1244743c0e5335) Thanks [@seepine](https://github.com/seepine)! - fix(np-form): fix enter-to-submit detection and upload rules, refine components
+
+- [`29119b7`](https://github.com/seepine/naive-plus/commit/29119b7ceb6a36f355dc2f07ccbe2286aafa52e3) Thanks [@seepine](https://github.com/seepine)! - docs(np-table): add display control docs, demos and tests
+
 ## 0.1.0-beta.18
 
 ### Patch Changes
