@@ -1,4 +1,4 @@
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, renderSlot } from 'vue'
 import { useCreate } from '../../_hooks/create'
 import { npTableProps } from './props'
 import {
@@ -14,7 +14,11 @@ import IconButtonGroup from './np-table-header/icon-button-group.vue'
 import NpTableAction from './np-table-action.vue'
 import NpTableCrudDialog from './components/np-table-crud-dialog.vue'
 import NpTableDelDialog from './components/np-table-del-dialog.vue'
-import type { NTableColumn, NTableColumnExt } from './interface'
+import type {
+  NTableColumn,
+  NTableColumnExt,
+  TableSlotOption,
+} from './interface'
 import IconAdd from './icon/add.vue'
 import { sanitizeTableProps } from './use-table-props'
 import { useCrud } from './use-crud'
@@ -194,12 +198,19 @@ export default defineComponent({
       return list
     })
 
+    const renderOptionSlot = (name: keyof TableSlotOption) => {
+      const optionSlot = props.option.slots?.[name]
+      return optionSlot ? optionSlot() : renderSlot(slots, name)
+    }
+
     return () => (
       <div class={bemClass.value}>
         <div class={`${bemClass.value}__header`}>
-          <div class={`${bemClass.value}__header-left`}>{slots.headerLeft}</div>
+          <div class={`${bemClass.value}__header-left`}>
+            {renderOptionSlot('headerLeft')}
+          </div>
           <div class={`${bemClass.value}__header-right`}>
-            {slots.headerRight}
+            {renderOptionSlot('headerRight')}
             {props.option.operation !== false && props.option.api?.add && (
               <NButton type="primary" onClick={() => openAction('add')}>
                 {{
@@ -230,7 +241,9 @@ export default defineComponent({
         />
 
         <div class={`${bemClass.value}__footer`}>
-          <div></div>
+          <div class={`${bemClass.value}__footer-left`}>
+            {renderOptionSlot('footerLeft')}
+          </div>
           {pagination.value ? (
             <NPagination {...pagination.value}></NPagination>
           ) : undefined}

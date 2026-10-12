@@ -4,5 +4,12 @@
     flex-direction: row;
     justify-content: space-between;
     margin-top: 16px;
+
+    &-left {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      align-items: center;
+    }
   }
 }

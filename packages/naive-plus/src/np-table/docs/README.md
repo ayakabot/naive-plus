@@ -37,6 +37,7 @@ import type { TableOption, TableColumn, TableFilter } from 'naive-plus'
 | props      | 表格属性，会透传给 `n-data-table`。为避免表格内部纵向滚动遮挡页面内容，会忽略 `maxHeight`、`flexHeight`、`virtualScroll` 等纵向滚动相关配置 | object                                                                               | -      |
 | pagination | 分页配置，设为 `false` 可禁用分页 | `false` / `PaginationConfig`                                                         | -      |
 | filters    | 筛选器配置                        | Array<[TableFilter](/table/filter/)>                                                   | -      |
+| slots      | 插槽配置，优先级高于组件同名插槽  | [TableSlotOption](/table/slot/#tableslotoption)                                        | -      |
 
 ### TableColumn
 

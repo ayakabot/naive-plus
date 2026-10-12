@@ -1,4 +1,4 @@
-import type { VNode } from 'vue'
+import type { VNode, VNodeChild } from 'vue'
 import type {
   DataTableProps,
   OnUpdateCheckedRowKeys,
@@ -46,6 +46,21 @@ export interface TableApiFetchResult<T extends AnyObject = AnyObject> {
    * 数据列表
    */
   items: T[]
+}
+
+export interface TableSlotOption {
+  /**
+   * 顶部左侧内容，优先级高于组件的 headerLeft 插槽
+   */
+  headerLeft?: () => VNodeChild
+  /**
+   * 顶部右侧内容，优先级高于组件的 headerRight 插槽
+   */
+  headerRight?: () => VNodeChild
+  /**
+   * 底部左侧内容，优先级高于组件的 footerLeft 插槽
+   */
+  footerLeft?: () => VNodeChild
 }
 
 export interface TableOption<T extends AnyObject = AnyObject> {
@@ -121,4 +136,5 @@ export interface TableOption<T extends AnyObject = AnyObject> {
       }
   columns: TableColumn<T>[]
   filters?: NpFilterItem[]
+  slots?: TableSlotOption
 }

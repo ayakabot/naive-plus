@@ -38,6 +38,7 @@ import type { TableOption, TableColumn, TableFilter } from 'naive-plus'
 | props      | Table props, passed through to `n-data-table`. To prevent the table's internal vertical scroll from covering page content, scroll-related configs like `maxHeight`, `flexHeight`, and `virtualScroll` will be ignored | object                                                                               | -      |
 | pagination | Pagination config; set to `false` to disable pagination | `false` / `PaginationConfig`                                                         | -      |
 | filters    | Filter config                        | Array<[TableFilter](/en/table/filter/)>                                              | -      |
+| slots      | Slot config, takes precedence over the same-named component slots | [TableSlotOption](/en/table/slot/#tableslotoption)                                   | -      |
 
 ### TableColumn
 

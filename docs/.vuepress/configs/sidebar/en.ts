@@ -47,6 +47,7 @@ export const en: SidebarConfig = {
         { text: 'Custom Operation Column', link: '/en/table/operation/' },
         { text: 'Filter', link: '/en/table/filter/' },
         { text: 'Selection', link: '/en/table/selection/' },
+        { text: 'Slots', link: '/en/table/slot/' },
       ],
     },
   ],
