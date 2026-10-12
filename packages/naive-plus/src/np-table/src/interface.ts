@@ -37,6 +37,10 @@ export type TableOperationOption = DropdownOption & {
   type?: 'edit' | 'del'
 }
 
+export type TableOperationOptions<T extends AnyObject = AnyObject> =
+  | TableOperationOption[]
+  | ((rowData: T, rowIndex: number) => TableOperationOption[])
+
 export interface TableApiFetchResult<T extends AnyObject = AnyObject> {
   /**
    * 总条数
@@ -103,10 +107,16 @@ export interface TableOption<T extends AnyObject = AnyObject> {
     | false
     | (Omit<NTableColumn<T>, 'key' | 'title' | 'render' | 'type'> & {
         label?: string
-        prefixRender?: (rowData: T, rowIndex: number) => VNode
-        suffixRender?: (rowData: T, rowIndex: number) => VNode
+        prefixRender?: (
+          rowData: T,
+          rowIndex: number
+        ) => VNode | VNode[] | undefined
+        suffixRender?: (
+          rowData: T,
+          rowIndex: number
+        ) => VNode | VNode[] | undefined
 
-        options?: TableOperationOption[]
+        options?: TableOperationOptions<T>
         onSelect?: (key: string, rowData: T, rowIndex: number) => void | boolean
 
         onBefore?: (

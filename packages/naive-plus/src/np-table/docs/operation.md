@@ -27,6 +27,12 @@ permalink: /table/operation/
 
 <demo src="../__demos__/operation-custom.vue"></demo>
 
+## 动态选项
+
+`options` 支持传入函数，可根据当前行数据动态生成下拉选项。
+
+<demo src="../__demos__/operation-options-function.vue"></demo>
+
 ## 类型定义
 
 ### operation
@@ -39,7 +45,7 @@ operation?:
       width?: number | string
       prefixRender?: (rowData: T, rowIndex: number) => VNode
       suffixRender?: (rowData: T, rowIndex: number) => VNode
-      options?: TableOperationOption[]
+      options?: TableOperationOption[] | ((rowData: T, rowIndex: number) => TableOperationOption[])
       onSelect?: (key: string) => void | boolean
       onBefore?: (rowData: T, type: 'add' | 'edit' | 'del') => boolean | T | void | Promise<...>
     }
@@ -47,10 +53,10 @@ operation?:
 
 ### TableOperationOption
 
-| 字段 | 说明 | 类型 |
-| --- | --- | --- |
-| `type` | 使用内置类型，复用编辑/删除逻辑 | `'edit'` \| `'del'` |
-| `key` | 自定义选项标识，触发 `onSelect` 回调 | `string \| number` |
-| `label` | 自定义选项显示文字 | `string \| (() => VNode)` |
+| 字段    | 说明                                 | 类型                      |
+| ------- | ------------------------------------ | ------------------------- |
+| `type`  | 使用内置类型，复用编辑/删除逻辑      | `'edit'` \| `'del'`       |
+| `key`   | 自定义选项标识，触发 `onSelect` 回调 | `string \| number`        |
+| `label` | 自定义选项显示文字                   | `string \| (() => VNode)` |
 
 > 可同时混合内置 type 与自定义 key，例如 `[{ type: 'edit' }, { type: 'del' }, { key: 'export', label: '导出' }]`。

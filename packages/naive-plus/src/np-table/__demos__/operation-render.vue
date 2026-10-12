@@ -31,12 +31,19 @@ const option: TableOption<User> = {
     label: '操作',
     width: 200,
     // 操作按钮前插入自定义内容
-    prefixRender: rowData =>
-      h(
+    prefixRender: rowData => {
+      if (rowData.id === 1) {
+        return undefined
+      }
+      if (rowData.id === 2) {
+        return [h('span', '1'), h('span', '2')]
+      }
+      return h(
         NButton,
         { size: 'small', type: 'info', style: 'margin-right:4px' },
         () => `查看 #${rowData.id}`
-      ),
+      )
+    },
     // 操作按钮后插入自定义内容
     suffixRender: rowData =>
       h(

@@ -11,7 +11,7 @@ import {
 } from 'naive-ui'
 import { isFunction, isObject } from '../../utils'
 import IconButtonGroup from './np-table-header/icon-button-group.vue'
-import NpTableAction from './np-table-action.vue'
+import NpTableAction from './np-table-action'
 import NpTableCrudDialog from './components/np-table-crud-dialog.vue'
 import NpTableDelDialog from './components/np-table-del-dialog.vue'
 import type {

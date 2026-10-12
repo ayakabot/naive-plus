@@ -28,6 +28,12 @@ Use `options` to configure dropdown menu items, and use `onSelect` to handle cli
 
 <demo src="../__demos__/operation-custom.en.vue"></demo>
 
+## Dynamic Options
+
+`options` also accepts a function to build dropdown items from the current row.
+
+<demo src="../__demos__/operation-options-function.en.vue"></demo>
+
 ## Types
 
 ### operation
@@ -40,7 +46,7 @@ operation?:
       width?: number | string
       prefixRender?: (rowData: T, rowIndex: number) => VNode
       suffixRender?: (rowData: T, rowIndex: number) => VNode
-      options?: TableOperationOption[]
+      options?: TableOperationOption[] | ((rowData: T, rowIndex: number) => TableOperationOption[])
       onSelect?: (key: string) => void | boolean
       onBefore?: (rowData: T, type: 'add' | 'edit' | 'del') => boolean | T | void | Promise<...>
     }
@@ -48,10 +54,10 @@ operation?:
 
 ### TableOperationOption
 
-| Field | Description | Type |
-| --- | --- | --- |
-| `type` | Built-in type, reuses the edit/delete logic | `'edit'` \| `'del'` |
-| `key` | Custom option identifier, triggers the `onSelect` callback | `string \| number` |
-| `label` | Custom option display label | `string \| (() => VNode)` |
+| Field   | Description                                                | Type                      |
+| ------- | ---------------------------------------------------------- | ------------------------- |
+| `type`  | Built-in type, reuses the edit/delete logic                | `'edit'` \| `'del'`       |
+| `key`   | Custom option identifier, triggers the `onSelect` callback | `string \| number`        |
+| `label` | Custom option display label                                | `string \| (() => VNode)` |
 
 > Built-in types and custom keys can be mixed, e.g. `[{ type: 'edit' }, { type: 'del' }, { key: 'export', label: 'Export' }]`.

@@ -1,6 +1,7 @@
 import { h } from 'vue'
 import { NText, type DropdownOption } from 'naive-ui'
-import type { TableOperationOption } from './interface'
+import { isFunction } from '../../utils'
+import type { TableOperationOption, TableOperationOptions } from './interface'
 
 const DEFAULT_OPERATION_OPTIONS: Record<'edit' | 'del', DropdownOption> = {
   edit: { label: '编辑', key: 'edit' },
@@ -16,9 +17,14 @@ const DEFAULT_OPERATION_TYPES: TableOperationOption[] = [
 ]
 
 export const buildOperationOptions = (
-  options?: TableOperationOption[]
+  options?: TableOperationOptions,
+  rowData: Record<string, any> = {},
+  rowIndex = 0
 ): DropdownOption[] => {
-  const sourceOptions = options?.length ? options : DEFAULT_OPERATION_TYPES
+  const userOptions = isFunction(options) ? options(rowData, rowIndex) : options
+  const sourceOptions = userOptions?.length
+    ? userOptions
+    : DEFAULT_OPERATION_TYPES
 
   return sourceOptions.map(option => {
     const { type, ...rest } = option

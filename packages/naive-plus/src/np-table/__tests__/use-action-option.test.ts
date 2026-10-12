@@ -45,4 +45,26 @@ describe('buildOperationOptions', () => {
 
     expect(options).toEqual([{ key: 'view', label: '查看' }])
   })
+
+  test('resolves options from a function with row data and index', () => {
+    const options = buildOperationOptions(
+      (rowData, rowIndex) => [
+        { key: `view-${rowData.id}`, label: `查看${rowIndex}` },
+      ],
+      { id: 1 },
+      2
+    )
+
+    expect(options).toEqual([{ key: 'view-1', label: '查看2' }])
+  })
+
+  test('supports built-in types returned by a function', () => {
+    const options = buildOperationOptions(
+      rowData => [{ type: 'del', disabled: rowData.locked }],
+      { locked: true }
+    )
+
+    expect(options).toHaveLength(1)
+    expect(options[0]).toMatchObject({ key: 'delete', disabled: true })
+  })
 })
