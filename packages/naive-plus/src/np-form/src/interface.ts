@@ -318,6 +318,11 @@ export interface FormOption<FormData extends AnyObject = AnyObject> {
         style?: CSSProperties
         prefixRender?: (data: FormData) => VNode
         suffixRender?: (data: FormData) => VNode
+        /**
+         * 提交（onSubmit）异常时，是否将错误信息展示在底部表单项的校验反馈中
+         * @defaultValue true
+         */
+        submitErrorFeedback?: boolean
         submitBtn?:
           | false
           | {

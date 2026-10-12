@@ -23,5 +23,6 @@ Customize the footer through the `footer` prop.
 | ---- | ---- | ---- | ---- |
 | submitBtn | Whether to show the submit button | boolean | true |
 | resetBtn | Whether to show the reset button | boolean | true |
+| submitErrorFeedback | Whether to show the submit (`onSubmit`) error message as the feedback of the footer form item | boolean | true |
 | prefixRender | Prefix render function | `(data)=>VNode` | - |
 | suffixRender | Suffix render function | `(data)=>VNode` | - |

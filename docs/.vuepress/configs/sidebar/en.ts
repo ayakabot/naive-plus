@@ -33,6 +33,7 @@ export const en: SidebarConfig = {
         { text: 'Change Event', link: '/en/form/change/' },
         { text: 'Custom Type', link: '/en/form/custom/' },
         { text: 'Custom Footer', link: '/en/form/footer/' },
+        { text: 'Submit Error Feedback', link: '/en/form/submit-error/' },
         { text: 'Enter to Submit', link: '/en/form/enter-submit/' },
         { text: 'Imperative Methods', link: '/en/form/imperative/' },
       ],

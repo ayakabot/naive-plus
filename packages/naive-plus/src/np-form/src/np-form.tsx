@@ -20,6 +20,22 @@ import EventBus from '../../utils/event-bus'
 
 const { name, bemClass } = useCreate('np-form')
 
+/**
+ * 提取提交异常的错误信息，用于展示在底部表单项的校验反馈中
+ * @param e 提交异常
+ * @returns 错误信息，返回 undefined 表示不展示
+ */
+const getSubmitErrorMessage = (e: unknown): string | undefined => {
+  if (e === undefined || e === null || e === false) {
+    return undefined
+  }
+  const message =
+    typeof e === 'string'
+      ? e
+      : (e as AnyObject)?.message ?? (e as AnyObject)?.msg
+  return message ? String(message) : undefined
+}
+
 export default defineComponent({
   name,
   inheritAttrs: false,
@@ -73,6 +89,21 @@ export default defineComponent({
     }
 
     const loading = ref(false)
+    /** 底部按钮所在表单项的校验反馈（提交异常时展示） */
+    const footerFeedback = ref<string>()
+    const footerValidationStatus = ref<'error' | 'success' | 'warning'>()
+    const submitErrorFeedbackEnabled = computed(
+      () =>
+        props.option.footer !== false &&
+        props.option.footer?.submitErrorFeedback !== false
+    )
+
+    const clearFooterFeedback = () => {
+      if (footerFeedback.value !== undefined) {
+        footerFeedback.value = undefined
+        footerValidationStatus.value = undefined
+      }
+    }
 
     watch(
       data,
@@ -110,6 +141,7 @@ export default defineComponent({
         if (!isEqual(data.value, val)) {
           initDefaultValue(val)
         }
+        clearFooterFeedback()
       }, 100),
       { deep: true, immediate: false }
     )
@@ -119,6 +151,7 @@ export default defineComponent({
         return
       }
       loading.value = true
+      clearFooterFeedback()
       try {
         await formRef.value?.validate()
       } catch {
@@ -127,13 +160,22 @@ export default defineComponent({
       }
       try {
         await runAsync(props.option.onSubmit, data.value)
-      } catch {
+      } catch (e) {
+        // 提交异常时，将错误信息展示在底部按钮所在表单项上
+        if (submitErrorFeedbackEnabled.value) {
+          const message = getSubmitErrorMessage(e)
+          if (message !== undefined) {
+            footerFeedback.value = message
+            footerValidationStatus.value = 'error'
+          }
+        }
       } finally {
         loading.value = false
       }
     }
 
     const reset = async () => {
+      clearFooterFeedback()
       formRef.value?.restoreValidation()
       data.value = cloneDeep(backData.value)
       await runAsync(props.option.onReset, data.value)
@@ -189,6 +231,8 @@ export default defineComponent({
           label=" "
           show-label={props.option.props?.labelPlacement === 'left'}
           {...props.option.footer?.formItemProps}
+          feedback={footerFeedback.value}
+          validationStatus={footerValidationStatus.value}
         >
           <div style={defaultStyle}>
             {isFunction(prefixRender) ? prefixRender(data.value) : undefined}
