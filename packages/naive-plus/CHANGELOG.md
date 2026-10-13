@@ -1,5 +1,17 @@
 # naive-plus
 
+## 0.1.0-beta.20
+
+### Minor Changes
+
+- [`fcb2089`](https://github.com/seepine/naive-plus/commit/fcb2089f2b7cfda876c36c6474766ee170409076) Thanks [@seepine](https://github.com/seepine)! - feat(naive-plus): enhance form, table, upload and fix multiple bugs
+
+- [`d0efa27`](https://github.com/seepine/naive-plus/commit/d0efa27b65589d0ebd9ad6043e8ade0c1b8bf151) Thanks [@seepine](https://github.com/seepine)! - feat(np-form): add footer align support
+
+### Patch Changes
+
+- [`a66168a`](https://github.com/seepine/naive-plus/commit/a66168a28f4ca51dad7f659188da29b71db9deb4) Thanks [@seepine](https://github.com/seepine)! - fix(resolver): import dependent component styles when resolving components
+
 ## 0.1.0-beta.19
 
 ### Minor Changes
