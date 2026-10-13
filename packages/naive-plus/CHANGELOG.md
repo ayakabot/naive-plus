@@ -1,5 +1,11 @@
 # naive-plus
 
+## 0.1.0-beta.23
+
+### Minor Changes
+
+- [`cabf664`](https://github.com/seepine/naive-plus/commit/cabf664d38c203a8aa17eeea7dc409fc16edc426) Thanks [@seepine](https://github.com/seepine)! - fix(np-cell-group,np-filter): support boolean keys and values
+
 ## 0.1.0-beta.22
 
 ### Minor Changes
