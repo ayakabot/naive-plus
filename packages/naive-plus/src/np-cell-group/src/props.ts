@@ -1,7 +1,7 @@
 import type { PropType, ExtractPropTypes } from 'vue'
 import type { CustomVNode } from '../../types'
 
-export type NpCellGroupKey = number | string
+export type NpCellGroupKey = number | string | boolean
 export type NpCellGroupKeys = NpCellGroupKey[]
 
 export interface NpCellGroupOption {

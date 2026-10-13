@@ -38,7 +38,7 @@ import {
   type NpCellGroupKeys,
   type NpCellGroupOption,
 } from '../../np-cell-group'
-import { NDivider, NEmpty, NInput, NSpin } from 'naive-ui'
+import { NDivider, NEmpty, NInput, NScrollbar, NSpin } from 'naive-ui'
 
 const { bemClass } = useCreate('np-filter-option')
 

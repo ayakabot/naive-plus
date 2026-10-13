@@ -39,6 +39,14 @@ A table filter component that supports a two-level filter interaction.
 | searchable | Whether search is supported | `boolean` | `false` |
 | options | Option configs | `Array<ParamsOption> \| Array<{title, options}>` | - |
 
+## ParamsOption
+
+| Prop | Description | Type | Default |
+| ----- | -------------------------------- | ----------------------------- | ------ |
+| label | Option label | `string \| () => VNode` | - |
+| value | Option value, supports string, number and boolean | `string \| number \| boolean` | - |
+| icon | Option icon | `VNode \| () => VNode` | - |
+
 ## Events
 
 | Event | Description | Callback |

@@ -111,6 +111,61 @@ describe('NpCellGroup', () => {
     expect(wrapper.emitted('update:keys')?.at(-1)).toEqual([['b']])
   })
 
+  test('checkbox: supports boolean keys', async () => {
+    const wrapper = mount(NpCellGroup, {
+      props: {
+        type: 'checkbox',
+        options: [
+          { label: '是', key: true },
+          { label: '否', key: false },
+        ],
+      },
+      global: { stubs },
+    })
+    const cells = wrapper.findAllComponents({ name: 'NpCell' })
+
+    await cells[1].trigger('click')
+    expect(wrapper.emitted('update:keys')?.[0]).toEqual([[false]])
+
+    await cells[0].trigger('click')
+    expect(wrapper.emitted('update:keys')?.at(-1)).toEqual([[false, true]])
+
+    await cells[1].trigger('click')
+    expect(wrapper.emitted('update:keys')?.at(-1)).toEqual([[true]])
+  })
+
+  test('radio: supports boolean key and clears on re-click', async () => {
+    const wrapper = mount(NpCellGroup, {
+      props: {
+        type: 'radio',
+        options: [{ label: '否', key: false }],
+      },
+      global: { stubs },
+    })
+    const cells = wrapper.findAllComponents({ name: 'NpCell' })
+
+    await cells[0].trigger('click')
+    expect(wrapper.emitted('update:keys')?.[0]).toEqual([[false]])
+
+    await cells[0].trigger('click')
+    expect(wrapper.emitted('update:keys')?.at(-1)).toEqual([[]])
+  })
+
+  test('syncs boolean keys when keys prop changes', async () => {
+    const wrapper = mount(NpCellGroup, {
+      props: {
+        type: 'radio',
+        options: [{ label: '否', key: false }],
+        keys: [],
+      },
+      global: { stubs },
+    })
+
+    await wrapper.setProps({ keys: [false] })
+    const cells = wrapper.findAllComponents({ name: 'NpCell' })
+    expect(cells[0].props('checked')).toBe(true)
+  })
+
   test('syncs selectedKeys when keys prop changes', async () => {
     const wrapper = mount(NpCellGroup, {
       props: {

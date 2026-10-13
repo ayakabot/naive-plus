@@ -5,7 +5,7 @@
     </div>
     <NpCell
       v-for="(item, idx) in props.options"
-      :key="getKey(item, idx)"
+      :key="`${idx}-${getKey(item, idx)}`"
       :label="item.label"
       :icon="item.icon"
       :value="item.value"
