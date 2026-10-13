@@ -62,7 +62,7 @@ export const customRequest = (
       reject(new Error('Upload aborted'))
     })
 
-    xhr.open('POST', action as string)
+    xhr.open(props?.method ?? 'POST', action as string)
     xhr.withCredentials = withCredentials ?? false
 
     Object.entries(headers ?? {}).forEach(([key, value]) => {

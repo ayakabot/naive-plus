@@ -27,11 +27,15 @@ export default defineComponent({
         timer = setTimeout(() => {
           loading.value = true
         }, props.loadingDelay)
-        runAsync(props.click, e).finally(() => {
-          clearTimeout(timer)
-          timer = undefined
-          loading.value = false
-        })
+        runAsync(props.click, e)
+          .catch(error => {
+            console.error(error)
+          })
+          .finally(() => {
+            clearTimeout(timer)
+            timer = undefined
+            loading.value = false
+          })
       },
       props.throttleDelay,
       {

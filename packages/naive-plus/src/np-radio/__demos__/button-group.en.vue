@@ -4,7 +4,7 @@
   </div>
   <np-radio
     v-model="value"
-    button
+    type="button"
     :options="[
       { label: 'Shanghai', value: 'shanghai' },
       { label: 'Beijing', value: 'beijing' },

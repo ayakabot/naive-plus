@@ -190,11 +190,8 @@ export type FormColumnComponent<FormData extends AnyObject = AnyObject> =
       options: Run<FormData, Array<SelectOption | any>>
       onChange?: (
         value: Array<string | number> | string | number,
-        ctx: {
-          data: FormData
-          ctx: OnChangeCtx<FormData> & {
-            option: SelectOption | SelectOption[]
-          }
+        ctx: OnChangeCtx<FormData> & {
+          option: SelectOption | SelectOption[]
         }
       ) => void
     }

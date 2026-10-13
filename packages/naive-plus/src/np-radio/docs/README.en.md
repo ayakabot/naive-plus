@@ -15,7 +15,7 @@ Specify options through `options`, and bind the value with `v-model`.
 
 ## Button Group
 
-Set `button` to use the button-group style.
+Set `type="button"` to use the button-group style.
 
 <demo src="../__demos__/button-group.en.vue"></demo>
 
@@ -47,23 +47,23 @@ Get the value change via the `change` event.
 
 ### Props
 
-| Prop | Description | Type | Default |
-| ---- | ---- | ---- | ---- |
-| v-model | Selected value | RadioGroupValue | - |
-| options | Options | AsyncValue<RadioOption[]> | - |
-| label-field | Custom label field name | string | `label` |
-| value-field | Custom value field name | string | `value` |
-| button | Whether to use button-group style | boolean | `false` |
-| loadingDelay | Loading delay in ms, effective when `options` is async | number | 250 |
-| props | NRadioGroup props | [NRadioGroup Props](https://www.naiveui.com/en-US/light/components/radio#RadioGroup-Props) | - |
-| onChange | Change event | `(value: RadioGroupValue) => void` | - |
+| Prop         | Description                                            | Type                                                                                       | Default   |
+| ------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------ | --------- |
+| v-model      | Selected value                                         | RadioGroupValue                                                                            | -         |
+| options      | Options                                                | AsyncValue<RadioOption[]>                                                                  | -         |
+| label-field  | Custom label field name                                | string                                                                                     | `label`   |
+| value-field  | Custom value field name                                | string                                                                                     | `value`   |
+| type         | Display type                                           | `'default'` \| `'button'`                                                                  | `default` |
+| loadingDelay | Loading delay in ms, effective when `options` is async | number                                                                                     | 250       |
+| props        | NRadioGroup props                                      | [NRadioGroup Props](https://www.naiveui.com/en-US/light/components/radio#RadioGroup-Props) | -         |
+| onChange     | Change event                                           | `(value: RadioGroupValue) => void`                                                         | -         |
 
 ### Events
 
-| Event | Description | Callback |
-| ------ | ---- | ---- |
+| Event             | Description        | Callback                           |
+| ----------------- | ------------------ | ---------------------------------- |
 | update:modelValue | Value change event | `(value: RadioGroupValue) => void` |
-| change | Change event | `(value: RadioGroupValue) => void` |
+| change            | Change event       | `(value: RadioGroupValue) => void` |
 
 ## Types
 

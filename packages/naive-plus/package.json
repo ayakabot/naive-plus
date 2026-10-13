@@ -58,6 +58,11 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seepine/naive-plus.git",
+    "directory": "packages/naive-plus"
+  },
   "peerDependencies": {
     "naive-ui": "^2.43.0",
     "vue": "^3.2.0"

@@ -77,4 +77,19 @@ describe('np-table expose', () => {
 
     wrapper.unmount()
   })
+
+  test('pagination.defaultPage 首次请求使用指定页', async () => {
+    const { option, fetch } = createOption()
+    option.pagination = { defaultPage: 3 }
+    const { wrapper } = mountTable(option)
+    await nextTick()
+    await flushPromises()
+
+    expect(fetch).toHaveBeenCalledWith(
+      { page: 3, pageSize: 10 },
+      expect.anything()
+    )
+
+    wrapper.unmount()
+  })
 })

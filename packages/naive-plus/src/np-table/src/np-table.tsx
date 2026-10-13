@@ -30,7 +30,7 @@ export default defineComponent({
   props: npTableProps,
   setup(props, { expose, slots }) {
     const loading = ref(false)
-    const page = ref(1)
+    const page = ref((props.option.pagination || {}).defaultPage || 1)
     const pageSize = ref((props.option.pagination || {}).defaultPageSize || 10)
     const itemCount = ref(0)
     const data = ref<any[]>([])

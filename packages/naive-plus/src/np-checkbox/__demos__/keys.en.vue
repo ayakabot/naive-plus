@@ -9,7 +9,8 @@
       { name: 'Shanghai', id: 'shanghai' },
       { name: 'Guangzhou', id: 'guangzhou' },
     ]"
-    :keys="{ label: 'name', value: 'id' }"
+    value-field="id"
+    label-field="name"
   />
 </template>
 <script lang="ts" setup>

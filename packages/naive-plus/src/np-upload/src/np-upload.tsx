@@ -70,6 +70,22 @@ export default defineComponent({
     )
 
     let isInternalChange = false
+
+    /**
+     * 回收已从当前文件列表中移除的 Blob URL
+     */
+    const revokeRemovedBlobUrls = (urls: (string | null | undefined)[]) => {
+      const kept = new Set(
+        urls.filter((url): url is string => !!url && url.startsWith('blob:'))
+      )
+      blobUrls.forEach(url => {
+        if (!kept.has(url)) {
+          URL.revokeObjectURL(url)
+          blobUrls.delete(url)
+        }
+      })
+    }
+
     watch(
       () => props.modelValue,
       val => {
@@ -82,6 +98,7 @@ export default defineComponent({
           props.urlOnly,
           imageCard
         )
+        revokeRemovedBlobUrls(fileList.value.map(f => f.url))
       },
       { deep: true }
     )
@@ -101,6 +118,7 @@ export default defineComponent({
         return f
       })
       fileList.value = processedFiles
+      revokeRemovedBlobUrls(processedFiles.map(f => f.url))
       isInternalChange = true
       const modelValue = fileListToModelValue(
         processedFiles,

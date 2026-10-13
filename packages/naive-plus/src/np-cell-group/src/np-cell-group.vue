@@ -45,7 +45,7 @@ const selectedKeys = ref<NpCellGroupKeys>([])
 watch(
   () => props.keys,
   () => {
-    selectedKeys.value = props.keys
+    selectedKeys.value = [...(props.keys ?? [])]
   },
   { immediate: true, deep: true }
 )
@@ -66,7 +66,7 @@ const handleClick = (item: NpCellGroupOption, index: number) => {
     if (selectedKeys.value.includes(key)) {
       selectedKeys.value = selectedKeys.value.filter(k => k !== key)
     } else {
-      selectedKeys.value.push(key)
+      selectedKeys.value = [...selectedKeys.value, key]
     }
   }
 

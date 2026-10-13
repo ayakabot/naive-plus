@@ -307,4 +307,41 @@ describe('NpUpload', () => {
     expect(fileList).toHaveLength(1)
     expect(fileList[0].url).toBe('http://example.com/photo.png')
   })
+
+  test('removes and revokes blob URL when file is removed', async () => {
+    const mockBlobUrl = 'blob:http://localhost/fake-blob'
+    const revokeObjectURL = vi.fn()
+    vi.stubGlobal('URL', {
+      ...globalThis.URL,
+      createObjectURL: vi.fn(() => mockBlobUrl),
+      revokeObjectURL,
+    })
+
+    const wrapper = mount(NpUpload, { props: { modelValue: [] } })
+    await nextTick()
+    const upload = wrapper.findComponent(NUpload)
+    const onUpdateFileList = upload.props('onUpdateFileList') as
+      | ((value: any[]) => void)
+      | undefined
+
+    const mockFile = new File(['content'], 'test.txt', { type: 'text/plain' })
+    onUpdateFileList?.([
+      {
+        id: '1',
+        name: 'test.txt',
+        url: null,
+        file: mockFile,
+        type: 'text/plain',
+        status: 'uploading',
+      },
+    ] as any)
+    await nextTick()
+    expect(revokeObjectURL).not.toHaveBeenCalled()
+
+    onUpdateFileList?.([])
+    await nextTick()
+    expect(revokeObjectURL).toHaveBeenCalledWith(mockBlobUrl)
+
+    vi.unstubAllGlobals()
+  })
 })

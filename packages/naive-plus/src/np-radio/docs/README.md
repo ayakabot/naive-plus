@@ -14,7 +14,7 @@ permalink: /components/np-radio/
 
 ## 按钮组
 
-设置 `button` 以使用按钮组样式。
+设置 `type="button"` 以使用按钮组样式。
 
 <demo src="../__demos__/button-group.vue"></demo>
 
@@ -46,23 +46,23 @@ permalink: /components/np-radio/
 
 ### Props
 
-| 属性 | 说明 | 类型 | 默认值 |
-| ---- | ---- | ---- | ---- |
-| v-model | 选中值 | RadioGroupValue | - |
-| options | 配置项 | AsyncValue<RadioOption[]> | - |
-| labelField | 自定义标签字段名 | string | label |
-| valueField | 自定义值字段名 | string | value |
-| button | 是否按钮组样式 | boolean | false |
-| loadingDelay | 加载出现延迟，当 options 异步时有效 | number | 250 |
-| props | NRadioGroup 属性 | [NRadioGroup Props](https://www.naiveui.com/zh-CN/light/components/radio#RadioGroup-Props) | - |
-| onChange | 改变事件 | (value: RadioGroupValue) => void | - |
+| 属性         | 说明                                | 类型                                                                                       | 默认值  |
+| ------------ | ----------------------------------- | ------------------------------------------------------------------------------------------ | ------- |
+| v-model      | 选中值                              | RadioGroupValue                                                                            | -       |
+| options      | 配置项                              | AsyncValue<RadioOption[]>                                                                  | -       |
+| labelField   | 自定义标签字段名                    | string                                                                                     | label   |
+| valueField   | 自定义值字段名                      | string                                                                                     | value   |
+| type         | 展示类型                            | 'default' \| 'button'                                                                      | default |
+| loadingDelay | 加载出现延迟，当 options 异步时有效 | number                                                                                     | 250     |
+| props        | NRadioGroup 属性                    | [NRadioGroup Props](https://www.naiveui.com/zh-CN/light/components/radio#RadioGroup-Props) | -       |
+| onChange     | 改变事件                            | (value: RadioGroupValue) => void                                                           | -       |
 
 ### Events
 
-| 事件名 | 说明 | 参数 |
-| ------ | ---- | ---- |
+| 事件名            | 说明       | 参数                     |
+| ----------------- | ---------- | ------------------------ |
 | update:modelValue | 值变更事件 | (value: RadioGroupValue) |
-| change | 改变事件 | (value: RadioGroupValue) |
+| change            | 改变事件   | (value: RadioGroupValue) |
 
 ## 类型定义
 

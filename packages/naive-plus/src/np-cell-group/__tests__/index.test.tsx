@@ -124,4 +124,20 @@ describe('NpCellGroup', () => {
     const cells = wrapper.findAllComponents({ name: 'NpCell' })
     expect(cells[0].props('checked')).toBe(true)
   })
+
+  test('does not mutate keys prop when toggling', async () => {
+    const keys = ref<string[]>([])
+    const wrapper = mount(NpCellGroup, {
+      props: {
+        type: 'checkbox',
+        options: [{ label: 'A', key: 'a' }],
+        keys: keys.value,
+      },
+      global: { stubs },
+    })
+    const cells = wrapper.findAllComponents({ name: 'NpCell' })
+    await cells[0].vm.$emit('click', { label: 'A', key: 'a' })
+    expect(keys.value).toEqual([])
+    expect(wrapper.emitted('update:keys')?.at(-1)).toEqual([['a']])
+  })
 })

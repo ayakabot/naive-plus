@@ -13,6 +13,7 @@ import {
   NAutoComplete,
   NCascader,
   NDatePicker,
+  NDynamicTags,
   NFormItem,
   NInput,
   NInputNumber,
@@ -130,17 +131,22 @@ export default defineComponent({
       })
     }
 
+    let initVersion = 0
     const init = async (newData: AnyObject) => {
+      const version = ++initVersion
       runAsync(props.column?.label, newData).then(res => {
+        if (version !== initVersion) return
         label.value = res
       })
       if (props.column?.display !== undefined) {
         runAsync(props.column?.display, newData).then(res => {
+          if (version !== initVersion) return
           display.value = res !== false
         })
       }
       if (props.column?.rule !== undefined) {
         runAsync<Rule[] | Rule>(props.column?.rule, newData).then(res => {
+          if (version !== initVersion) return
           const newRule = isArray(res) ? res : [res]
           initRule(newRule)
         })
@@ -175,9 +181,16 @@ export default defineComponent({
 
     const onChange = (val: any, ...args: any[]) => {
       value.value = val
+      const extraCtx: AnyObject = {}
+      if (type === 'select') {
+        extraCtx.option = args[0]
+      } else if (type === 'tree') {
+        extraCtx.option = args[0]
+        extraCtx.meta = args[1]
+      }
       // @ts-ignore
       props.column.onChange?.(val, {
-        ...args,
+        ...extraCtx,
         data: formInj.data.value,
         setData: (newData: AnyObject) => {
           formInj.data.value = { ...formInj.data.value, ...newData }
@@ -398,6 +411,18 @@ export default defineComponent({
           >
             {{ ...column.slots }}
           </NSwitch>
+        )
+      }
+
+      if (type === 'tag') {
+        return (
+          <NDynamicTags
+            {...props.column.props}
+            value={value.value || []}
+            onUpdateValue={onChange}
+          >
+            {{ ...column.slots }}
+          </NDynamicTags>
         )
       }
 

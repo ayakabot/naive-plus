@@ -61,6 +61,13 @@ interface AsyncComputedOptions {
 }
 
 /**
+ * computedAsync 返回的 ref，惰性模式下可通过 evaluate 手动触发首次求值
+ */
+export type ComputedAsyncRef<T> = (ShallowRef<T> | Ref<UnwrapRef<T>>) & {
+  evaluate: () => void
+}
+
+/**
  * 支持异步的计算属性
  * @param evaluationCallback 函数
  * @param initialState 初始值
@@ -71,7 +78,7 @@ export const computedAsync = <T>(
   evaluationCallback: (onCancel: AsyncComputedOnCancel) => T | Promise<T>,
   initialState: T,
   optionsOrRef?: Ref<boolean> | AsyncComputedOptions
-): ShallowRef<T> | Ref<UnwrapRef<T>> => {
+): ComputedAsyncRef<T> => {
   let options
   if (isRef(optionsOrRef)) {
     options = {
@@ -92,10 +99,7 @@ export const computedAsync = <T>(
   const current = shallow ? shallowRef(initialState) : ref(initialState)
   let counter = 0
   watchEffect(async onInvalidate => {
-    if (!started.value) {
-      started.value = true
-      return
-    }
+    if (!started.value) return
     if (resetInitialStateEffect) {
       current.value = initialState
     }
@@ -122,7 +126,14 @@ export const computedAsync = <T>(
       hasFinished = true
     }
   })
-  return current
+  return Object.assign(current, {
+    /**
+     * 惰性模式下，手动触发首次求值
+     */
+    evaluate: () => {
+      started.value = true
+    },
+  }) as ComputedAsyncRef<T>
 }
 
 /**

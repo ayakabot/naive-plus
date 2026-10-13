@@ -27,7 +27,7 @@ The `options` prop supports an async computed function, e.g. for fetching differ
 
 ## Custom Field Names
 
-Usually options are fetched from a backend, and the data structure is not always `{label, value}`. You can use `keys` to specify option field names.
+Usually options are fetched from a backend, and the data structure is not always `{label, value}`. You can use `labelField` and `valueField` to specify option field names.
 
 <demo src="../__demos__/keys.en.vue"></demo>
 
@@ -41,19 +41,20 @@ Get the value change via the `change` event.
 
 ### Props
 
-| Prop | Description | Type | Default |
-| ---- | -------- | ------ | ------ |
-| v-model | Selected values | CheckboxGroupValue[] | - |
-| options | Options | AsyncValue<CheckboxOption[]> | - |
-| keys | Custom field names | {label: string, value: string} | `{ label: 'label', value: 'value' }` |
-| loadingDelay | Loading delay in ms, effective when `options` is async | number | 250 |
-| props | TCheckboxGroup props | [TCheckboxGroup Props](https://tdesign.tencent.com/vue-next/components/checkbox?tab=api#checkboxgroup-props) | - |
-| onChange | Change event | `(value: T, context: CheckboxGroupChangeContext) => void` | - |
+| Prop         | Description                                            | Type                                                                                                         | Default |
+| ------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ | ------- |
+| v-model      | Selected values                                        | CheckboxGroupValue[]                                                                                         | -       |
+| options      | Options                                                | AsyncValue<CheckboxOption[]>                                                                                 | -       |
+| labelField   | Custom label field name                                | string                                                                                                       | `label` |
+| valueField   | Custom value field name                                | string                                                                                                       | `value` |
+| loadingDelay | Loading delay in ms, effective when `options` is async | number                                                                                                       | 250     |
+| props        | TCheckboxGroup props                                   | [TCheckboxGroup Props](https://tdesign.tencent.com/vue-next/components/checkbox?tab=api#checkboxgroup-props) | -       |
+| onChange     | Change event                                           | `(value: T, context: CheckboxGroupChangeContext) => void`                                                    | -       |
 
 ### Events
 
-| Event | Description | Callback |
-| ------ | -------------- | ----------------------------- |
+| Event  | Description  | Callback                                                  |
+| ------ | ------------ | --------------------------------------------------------- |
 | change | Change event | `(value: T, context: CheckboxGroupChangeContext) => void` |
 
 ## Types

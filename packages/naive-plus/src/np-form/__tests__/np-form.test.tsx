@@ -1,6 +1,7 @@
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, test, expect } from 'vitest'
+import { describe, test, expect, vi } from 'vitest'
+import { NDynamicTags, NSelect } from 'naive-ui'
 import { NpForm } from '../index'
 import type { FormOption } from '../src/interface'
 
@@ -151,9 +152,7 @@ describe('NpForm', () => {
     await nextTick()
 
     const footer = wrapper.find('.np-form__footer')
-    expect((footer.element as HTMLElement).style.justifyContent).toBe(
-      'flex-start'
-    )
+    expect((footer.element as HTMLElement).style.justifyContent).toBe('start')
   })
 
   test('footer align right aligns content and feedback to the end', async () => {
@@ -168,9 +167,7 @@ describe('NpForm', () => {
     await nextTick()
 
     const footer = wrapper.find('.np-form__footer')
-    expect((footer.element as HTMLElement).style.justifyContent).toBe(
-      'flex-end'
-    )
+    expect((footer.element as HTMLElement).style.justifyContent).toBe('end')
 
     const submitButton = wrapper
       .findAll('button')
@@ -183,5 +180,44 @@ describe('NpForm', () => {
     expect(
       feedbackWrappers[feedbackWrappers.length - 1].attributes('style')
     ).toContain('text-align: end')
+  })
+
+  test('renders tag type with NDynamicTags', async () => {
+    const option: FormOption<Record<string, any>> = {
+      columns: [{ label: '标签', key: 'tags', type: 'tag' }],
+    }
+    const wrapper = mount(NpForm, { props: { option } })
+    await nextTick()
+    expect(wrapper.findComponent(NDynamicTags).exists()).toBe(true)
+  })
+
+  test('select onChange receives option in ctx', async () => {
+    const onChange = vi.fn()
+    const option: FormOption<Record<string, any>> = {
+      columns: [
+        {
+          label: '城市',
+          key: 'city',
+          type: 'select',
+          options: [{ label: '北京', value: 'beijing' }],
+          onChange,
+        },
+      ],
+    }
+    const wrapper = mount(NpForm, { props: { option } })
+    await nextTick()
+    const select = wrapper.findComponent(NSelect)
+    const onUpdateValue = select.props('onUpdateValue') as (
+      value: string,
+      option: Record<string, any>
+    ) => void
+    onUpdateValue('beijing', { label: '北京', value: 'beijing' })
+    await nextTick()
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    const ctx = onChange.mock.calls[0][1]
+    expect(ctx.option).toEqual({ label: '北京', value: 'beijing' })
+    expect(ctx.data).toBeDefined()
+    expect(typeof ctx.setData).toBe('function')
   })
 })
