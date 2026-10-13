@@ -1,5 +1,11 @@
 # naive-plus
 
+## 0.1.0-beta.21
+
+### Minor Changes
+
+- [`c6ae693`](https://github.com/seepine/naive-plus/commit/c6ae6930158eacc1b2fe500cf006fd0330ebd3ca) Thanks [@seepine](https://github.com/seepine)! - feat(np-table): add search input support
+
 ## 0.1.0-beta.20
 
 ### Minor Changes
