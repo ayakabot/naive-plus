@@ -26,6 +26,11 @@ import { useCrud } from './use-crud'
 
 const { name, bemClass } = useCreate('np-table')
 
+/**
+ * loading 展示延迟，避免请求过快时闪烁
+ */
+const LOADING_DELAY = 250
+
 export default defineComponent({
   name,
   props: npTableProps,
@@ -60,7 +65,12 @@ export default defineComponent({
       }
 
       const version = ++fetchVersion
-      loading.value = true
+      const loadingTimer = setTimeout(() => {
+        // 期间已发出更新的请求，交由最新请求展示 loading
+        if (version === fetchVersion) {
+          loading.value = true
+        }
+      }, LOADING_DELAY)
       try {
         const result = await props.option.api.fetch(
           { page: page.value, pageSize: pageSize.value },
@@ -75,6 +85,7 @@ export default defineComponent({
           itemCount.value = result.itemCount
         }
       } finally {
+        clearTimeout(loadingTimer)
         // 仅最新请求结束才关闭 loading，避免过期请求提前关闭
         if (version === fetchVersion) {
           loading.value = false
