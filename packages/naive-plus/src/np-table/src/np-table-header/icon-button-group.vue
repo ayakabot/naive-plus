@@ -6,7 +6,7 @@
     placement="left"
     @change="handleFilterParamsChange"
   >
-    <NBadge :dot="true" :show="hasFilter" type="info">
+    <NBadge :dot="true" :show="hasFilter" :offset="[-2, 2]" type="info">
       <NButton secondary :class="`${bemClass}-button`">
         <template #icon>
           <NIcon>
