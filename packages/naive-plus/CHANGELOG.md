@@ -1,5 +1,15 @@
 # naive-plus
 
+## 0.1.0-beta.22
+
+### Minor Changes
+
+- [`031d840`](https://github.com/seepine/naive-plus/commit/031d84003f31d359fb67e38e8f22cce833aa5ef7) Thanks [@seepine](https://github.com/seepine)! - fix(np-table): delay loading display to avoid flicker on fast requests
+
+### Patch Changes
+
+- [`4a31e2d`](https://github.com/seepine/naive-plus/commit/4a31e2deb59089a9b1944696a82293e42eddaffc) Thanks [@seepine](https://github.com/seepine)! - fix(np-table): adjust filter badge dot offset
+
 ## 0.1.0-beta.21
 
 ### Minor Changes
