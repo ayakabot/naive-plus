@@ -5,7 +5,7 @@ import type {
   TableBaseColumn,
 } from 'naive-ui/es/data-table/src/interface'
 import type { AnyObject, AsyncValue } from '../../types'
-import type { DropdownOption, PaginationProps } from 'naive-ui'
+import type { DropdownOption, InputProps, PaginationProps } from 'naive-ui'
 import type { NpFilterItem } from '../../np-filter'
 import type { FormColumn, FormOption } from '../../np-form'
 
@@ -47,6 +47,38 @@ export type TableColumn<T extends AnyObject = AnyObject> = {
 }
 
 export type TableFilter = NpFilterItem
+
+export interface TableSearchOption {
+  /**
+   * 提交给 `api.fetch` 的查询参数名
+   * @default 'keyword'
+   */
+  key?: string
+  /**
+   * 输入框占位文本
+   * @default '请输入关键词搜索'
+   */
+  placeholder?: string
+  /**
+   * 输入框宽度
+   * @default 220
+   */
+  width?: string | number
+  /**
+   * 是否可清空
+   * @default true
+   */
+  clearable?: boolean
+  /**
+   * 输入防抖时间（毫秒），停止输入后自动触发搜索
+   * @default 300
+   */
+  debounce?: number
+  /**
+   * 透传给 `n-input` 的其他属性
+   */
+  props?: InputProps
+}
 
 export type TableOperationOption = DropdownOption & {
   type?: 'edit' | 'del'
@@ -176,5 +208,9 @@ export interface TableOption<T extends AnyObject = AnyObject> {
       }
   columns: TableColumn<T>[]
   filters?: NpFilterItem[]
+  /**
+   * 搜索框配置，不传或为 `false` 时不显示
+   */
+  search?: false | TableSearchOption
   slots?: TableSlotOption
 }

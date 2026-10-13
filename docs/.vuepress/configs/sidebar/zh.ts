@@ -47,6 +47,7 @@ export const zh: SidebarConfig = {
         { text: '增删改查', link: '/table/crud/' },
         { text: '主动方法', link: '/table/expose/' },
         { text: '筛选功能', link: '/table/filter/' },
+        { text: '搜索功能', link: '/table/search/' },
         { text: '多选功能', link: '/table/selection/' },
         { text: '显隐控制', link: '/table/display/' },
         { text: '自定义插槽', link: '/table/slot/' },

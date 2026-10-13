@@ -11,6 +11,7 @@ import {
 } from 'naive-ui'
 import { isFunction, isObject } from '../../utils'
 import IconButtonGroup from './np-table-header/icon-button-group.vue'
+import NpTableSearch from './np-table-header/search-input.vue'
 import NpTableAction from './np-table-action'
 import NpTableCrudDialog from './components/np-table-crud-dialog.vue'
 import NpTableDelDialog from './components/np-table-del-dialog.vue'
@@ -36,6 +37,10 @@ export default defineComponent({
     const data = ref<any[]>([])
     const queryParams = ref<Record<string, any>>({})
     /**
+     * 搜索框提交的查询参数，与筛选参数合并后传递给 api.fetch
+     */
+    const searchParams = ref<Record<string, any>>({})
+    /**
      * 外部绑定的查询参数，会与筛选参数合并后传递给 api.fetch
      */
     const params = ref<Record<string, any>>({})
@@ -44,26 +49,36 @@ export default defineComponent({
      */
     const columns = ref<NTableColumnExt[]>([])
 
+    /**
+     * 请求序号，仅接受最新一次请求的响应，避免过期响应覆盖新数据
+     */
+    let fetchVersion = 0
+
     const fetchData = async () => {
-      if (loading.value) {
-        return
-      }
       if (!isFunction(props.option.api?.fetch)) {
         return
       }
 
+      const version = ++fetchVersion
       loading.value = true
       try {
         const result = await props.option.api.fetch(
           { page: page.value, pageSize: pageSize.value },
-          { ...queryParams.value, ...params.value }
+          { ...queryParams.value, ...searchParams.value, ...params.value }
         )
+        // 期间已发出更新的请求，丢弃本次过期响应
+        if (version !== fetchVersion) {
+          return
+        }
         data.value = result.items || []
         if (result.itemCount !== undefined) {
           itemCount.value = result.itemCount
         }
       } finally {
-        loading.value = false
+        // 仅最新请求结束才关闭 loading，避免过期请求提前关闭
+        if (version === fetchVersion) {
+          loading.value = false
+        }
       }
     }
 
@@ -163,6 +178,18 @@ export default defineComponent({
       fetchData()
     }
 
+    /**
+     * 搜索框配置，`false` 或未配置时不渲染
+     */
+    const searchOption = computed(() => props.option.search || undefined)
+
+    const handleSearchChange = (value?: string) => {
+      const key = searchOption.value?.key ?? 'keyword'
+      searchParams.value = value ? { [key]: value } : {}
+      page.value = 1
+      fetchData()
+    }
+
     const displayColumns = computed<NTableColumn[]>(() => {
       const list: NTableColumn[] = columns.value.filter(item => item.display)
 
@@ -226,6 +253,12 @@ export default defineComponent({
       <div class={bemClass.value}>
         <div class={`${bemClass.value}__header`}>
           <div class={`${bemClass.value}__header-left`}>
+            {searchOption.value ? (
+              <NpTableSearch
+                option={searchOption.value}
+                onChange={handleSearchChange}
+              />
+            ) : undefined}
             {renderOptionSlot('headerLeft')}
           </div>
           <div class={`${bemClass.value}__header-right`}>

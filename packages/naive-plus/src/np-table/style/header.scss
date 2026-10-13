@@ -1,3 +1,13 @@
+.np-table__search {
+  &-icon {
+    opacity: 0.8;
+  }
+
+  .n-input__prefix {
+    margin-right: calc(var(--n-padding-left) * 0.75);
+  }
+}
+
 .np-table__header {
   display: flex;
   align-items: center;

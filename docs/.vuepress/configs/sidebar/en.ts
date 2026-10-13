@@ -47,6 +47,7 @@ export const en: SidebarConfig = {
         { text: 'CRUD', link: '/en/table/crud/' },
         { text: 'Imperative Methods', link: '/en/table/expose/' },
         { text: 'Filter', link: '/en/table/filter/' },
+        { text: 'Search', link: '/en/table/search/' },
         { text: 'Selection', link: '/en/table/selection/' },
         { text: 'Display Control', link: '/en/table/display/' },
         { text: 'Custom Slots', link: '/en/table/slot/' },
