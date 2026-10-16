@@ -50,7 +50,7 @@ export default defineComponent({
     const RadioItem = props.type === 'button' ? NRadioButton : NRadio
 
     return () => (
-      <div class={bemClass.value} style={{ minHeight: '25.6px' }}>
+      <div class={bemClass.value}>
         <NRadioGroup
           {...props.props}
           value={data.value}
