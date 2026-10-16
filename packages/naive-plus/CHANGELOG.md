@@ -1,5 +1,11 @@
 # naive-plus
 
+## 0.1.0-beta.24
+
+### Patch Changes
+
+- [`a157044`](https://github.com/seepine/naive-plus/commit/a157044f35bb855edabe17ccec79280848ca56c9) Thanks [@seepine](https://github.com/seepine)! - fix(np-radio): fix layout offset caused by container min-height
+
 ## 0.1.0-beta.23
 
 ### Minor Changes
