@@ -21,6 +21,11 @@
     }
   }
 
+  &__empty-placeholder {
+    // 与 naive-ui 默认空状态（iconSize medium）高度对齐，避免占位切换时抖动
+    min-height: 40px;
+  }
+
   &__operation {
     display: flex;
     flex-direction: row;

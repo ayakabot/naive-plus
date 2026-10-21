@@ -58,6 +58,10 @@ export default defineComponent({
      * 请求序号，仅接受最新一次请求的响应，避免过期响应覆盖新数据
      */
     let fetchVersion = 0
+    /**
+     * 是否已完成首次请求，完成前既不展示空状态也不展示 loading
+     */
+    const fetched = ref(false)
 
     const fetchData = async () => {
       if (!isFunction(props.option.api?.fetch)) {
@@ -89,6 +93,7 @@ export default defineComponent({
         // 仅最新请求结束才关闭 loading，避免过期请求提前关闭
         if (version === fetchVersion) {
           loading.value = false
+          fetched.value = true
         }
       }
     }
@@ -260,6 +265,17 @@ export default defineComponent({
       return optionSlot ? optionSlot() : renderSlot(slots, name)
     }
 
+    /**
+     * 首次请求完成前用空白占位代替空状态，避免加载期间闪现「暂无数据」；
+     * 返回空数组时交给 naive-ui 渲染默认空状态
+     */
+    const renderEmpty = () => {
+      if (!fetched.value) {
+        return [<div class={`${bemClass.value}__empty-placeholder`} />]
+      }
+      return []
+    }
+
     return () => (
       <div class={bemClass.value}>
         <div class={`${bemClass.value}__header`}>
@@ -301,7 +317,9 @@ export default defineComponent({
           loading={loading.value}
           columns={displayColumns.value}
           data={data.value}
-        />
+        >
+          {{ empty: renderEmpty }}
+        </NDataTable>
 
         <div class={`${bemClass.value}__footer`}>
           <div class={`${bemClass.value}__footer-left`}>
