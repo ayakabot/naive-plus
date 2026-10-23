@@ -14,7 +14,7 @@ import {
   NCascader,
   NDatePicker,
   NDynamicTags,
-  NFormItem,
+  NFormItemGi,
   NInput,
   NInputNumber,
   NRate,
@@ -32,6 +32,7 @@ import type {
   FormItemToolInjection,
   Rule,
 } from './interface'
+import { getGridItemProps } from './grid'
 import NpCheckbox from '../../np-checkbox'
 import NpRadio from '../../np-radio'
 import NpUpload from '../../np-upload'
@@ -52,7 +53,7 @@ const getControlledValue = <T,>(value: T | undefined, emptyValue: T) => {
   return value ?? emptyValue
 }
 
-export default defineComponent({
+const NpFormItem = defineComponent({
   name,
   props: npFormItemProps,
   setup(props) {
@@ -68,6 +69,10 @@ export default defineComponent({
 
     const { type } = props.column || {}
     const columnKey = props.column.key || '_unknown'
+    /** 栅格占位，未指定 span 时占满整行 */
+    const gridItemProps = computed(() =>
+      getGridItemProps(formInj.props.option, props.column.formItemProps)
+    )
 
     const value = computed({
       get: () => formInj.data.value[columnKey],
@@ -484,11 +489,17 @@ export default defineComponent({
       },
     })
 
-    return () =>
-      display.value ? (
-        <NFormItem
+    return () => {
+      if (!display.value) {
+        return undefined
+      }
+      // n-form-item-gi 仅按白名单向 n-grid-item 转发 props，class 会作为
+      // fallthrough attrs 落到栅格单元 div 上（而非内部的 .n-form-item）
+      return (
+        <NFormItemGi
           class={bemClass.value}
           {...props.column.formItemProps}
+          {...gridItemProps.value}
           path={props.column.key}
           rule={rule.value}
           first={props.column.formItemProps?.first ?? true}
@@ -499,7 +510,13 @@ export default defineComponent({
             default: () => comp(),
             label: () => label.value,
           }}
-        </NFormItem>
-      ) : undefined
+        </NFormItemGi>
+      )
+    }
   },
 })
+
+// 标记为 naive-ui 栅格项，使 n-grid 能识别该组件为栅格子项（naive-ui 内部约定）
+;(NpFormItem as any).__GRID_ITEM__ = true
+
+export default NpFormItem

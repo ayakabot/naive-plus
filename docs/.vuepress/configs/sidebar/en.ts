@@ -29,6 +29,7 @@ export const en: SidebarConfig = {
         { text: 'Rules Validation', link: '/en/form/rules/' },
         { text: 'Dictionary Options', link: '/en/form/options/' },
         { text: 'Display Control', link: '/en/form/display/' },
+        { text: 'Grid Layout', link: '/en/form/grid/' },
         { text: 'File Upload', link: '/en/form/upload/' },
         { text: 'Change Event', link: '/en/form/change/' },
         { text: 'Custom Type', link: '/en/form/custom/' },

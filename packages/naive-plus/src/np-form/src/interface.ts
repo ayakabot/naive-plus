@@ -13,9 +13,10 @@ import type {
   DatePickerSlots,
   DynamicTagsProps,
   DynamicTagsSlots,
-  FormItemProps,
+  FormItemGiProps,
   FormItemRule,
   FormProps,
+  GridProps,
   InputNumberProps,
   InputNumberSlots,
   InputProps,
@@ -74,15 +75,42 @@ export interface FormColumnBase<FormData extends AnyObject = AnyObject> {
    */
   rule?: Run<FormData, Rule | Array<Rule>> | Rule | Array<Rule>
   /**
-   * 表单项属性
+   * 表单项属性，可通过 `span` / `offset` 控制栅格布局
    */
-  formItemProps?: Omit<FormItemProps, 'label' | 'rule' | 'path' | 'rulePath'>
+  formItemProps?: FormGridItemProps
   /**
    * 是否显示
    * @defaultValue true
    */
   display?: Run<FormData, boolean>
 }
+
+/**
+ * 表单项属性
+ * - 兼容 `n-form-item` 属性，额外支持 `span` / `offset`
+ * - 响应式写法为 `'默认值 断点:值 ...'`，默认值不要写 `0`，否则 `n-grid` 会跳过该表单项
+ * - `offset` 需与 `span` 搭配使用：未指定 `span` 时默认占满整行，此时再设置 `offset` 会导致整行右移溢出容器
+ * @example
+ * ```ts
+ * // 支持数字
+ * { span: 24 }
+ * // 支持 px 响应式
+ * { span: "24 400:12 600:8 800:6" }
+ * // 支持命名断点响应式，需配合 option.grid.responsive: 'screen'
+ * { span: "24 s:12 m:8" }
+ * ```
+ */
+export type FormGridItemProps = Omit<
+  FormItemGiProps,
+  | 'label'
+  | 'rule'
+  | 'path'
+  | 'rulePath'
+  | 'privateSpan'
+  | 'privateOffset'
+  | 'privateColStart'
+  | 'privateShow'
+>
 
 type OmitValue =
   | 'defaultValue'
@@ -303,15 +331,28 @@ export interface FormOption<FormData extends AnyObject = AnyObject> {
    * @defaultValue false
    */
   enterSubmitMode?: 'last' | 'all' | false
+  /**
+   * 栅格布局配置，直接透传给 `n-grid`
+   * - 表单项始终使用 `n-form-item-gi` 渲染，未指定 `span` 时占满整行
+   * - `itemResponsive` 默认开启；传 `false` 仅在 `cols` / `xGap` / `yGap` 均为固定数值时才会真正关闭
+   * @example
+   * ```ts
+   * grid: {
+   *   cols: 24,           // 默认24，支持响应式如 cols="2 400:4 600:6"
+   *   responsive: 'self', // 默认基于自身宽度进行响应式布局，可选 screen
+   *   itemResponsive: true, // 默认开启，支持响应式 span / offset
+   *   xGap: 0,            // 横向间隔槽
+   *   yGap: 0             // 纵向间隔槽
+   * }
+   * ```
+   */
+  grid?: Partial<GridProps>
   columns: FormColumn<FormData>[]
   props?: Omit<FormProps, 'model' | 'rules' | 'onSubmit'>
   footer?:
     | false
     | {
-        formItemProps?: Omit<
-          FormItemProps,
-          'label' | 'rule' | 'path' | 'rulePath'
-        >
+        formItemProps?: FormGridItemProps
         style?: CSSProperties
         prefixRender?: (data: FormData) => VNode
         suffixRender?: (data: FormData) => VNode

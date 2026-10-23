@@ -29,6 +29,7 @@ export const zh: SidebarConfig = {
         { text: '规则校验', link: '/form/rules/' },
         { text: '字典选项', link: '/form/options/' },
         { text: '显隐控制', link: '/form/display/' },
+        { text: '栅格布局', link: '/form/grid/' },
         { text: '文件上传', link: '/form/upload/' },
         { text: '改变事件', link: '/form/change/' },
         { text: '自定义类型', link: '/form/custom/' },

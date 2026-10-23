@@ -47,6 +47,7 @@ import type { FormOption } from 'naive-plus'
 | onSubmit | Submit event | `(data)=>Promise<void>` | - |
 | onReset | Reset event | `(data)=>Promise<void>` | - |
 | props | Form props | object | - |
+| grid | Grid layout config, see [Grid Layout](/en/form/grid/) | object | - |
 
 ### FormColumn
 
@@ -58,4 +59,4 @@ import type { FormOption } from 'naive-plus'
 | defaultValue | Default value | any | - |
 | options | Dictionary options, e.g. checkbox, select, etc. | `Array<any>` / `()=>Promise<Array<any>>` | - |
 | props | Component props, passed through to the actual component | object | - |
-| formItemProps | Form item props, passed through to `n-form-item` | object | - |
+| formItemProps | Form item props, passed through to `n-form-item-gi`; supports `span` / `offset` | object | - |

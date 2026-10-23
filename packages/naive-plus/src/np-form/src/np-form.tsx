@@ -9,9 +9,10 @@ import {
 } from 'vue'
 import { useCreate } from '../../_hooks/create'
 import { npFormProps } from './props'
-import { NForm, NFormItem, NSpin, type FormInst } from 'naive-ui'
+import { NForm, NFormItemGi, NGi, NGrid, NSpin, type FormInst } from 'naive-ui'
 import NpFormItem from './np-form-item'
 import type { FormInjection } from './interface'
+import { getGridItemProps } from './grid'
 import { cloneDeep, isEqual, throttle } from 'lodash-es'
 import NpButton from '../../np-button'
 import type { AnyObject } from '../../types'
@@ -135,6 +136,15 @@ export default defineComponent({
 
     initDefaultValue(props.modelValue)
 
+    /**
+     * 栅格配置
+     * - 默认开启 `itemResponsive`，使 `span` / `offset` 的响应式写法开箱即用
+     */
+    const gridConfig = computed(() => ({
+      itemResponsive: true,
+      ...props.option.grid,
+    }))
+
     watch(
       () => props.modelValue,
       throttle(val => {
@@ -242,10 +252,11 @@ export default defineComponent({
         : formItemProps?.feedbackStyle
 
       return (
-        <NFormItem
+        <NFormItemGi
           label=" "
           show-label={props.option.props?.labelPlacement === 'left'}
           {...formItemProps}
+          {...getGridItemProps(props.option, formItemProps)}
           feedbackStyle={feedbackStyle}
           feedback={footerFeedback.value}
           validationStatus={footerValidationStatus.value}
@@ -269,9 +280,30 @@ export default defineComponent({
             ) : undefined}
             {isFunction(suffixRender) ? suffixRender(data.value) : undefined}
           </div>
-        </NFormItem>
+        </NFormItemGi>
       )
     }
+
+    /** 渲染表单项列表 */
+    const renderColumns = () =>
+      (props.option.columns || []).map((column, columnIdx) => {
+        const gridItemProps = getGridItemProps(
+          props.option,
+          column.formItemProps
+        )
+        if (typeof column.render === 'function') {
+          // n-grid 仅渲染栅格子项，自定义渲染内容需包裹 n-gi
+          return <NGi {...gridItemProps}>{column.render(data.value)}</NGi>
+        }
+        return (
+          <NpFormItem
+            column={column}
+            isLastColumn={columnIdx === lastItemIdx.value}
+            injectKey={injectKey}
+            {...gridItemProps}
+          ></NpFormItem>
+        )
+      })
 
     return () => (
       <NSpin
@@ -290,19 +322,10 @@ export default defineComponent({
             submit()
           }}
         >
-          {(props.option.columns || []).map((column, columnIdx) => {
-            if (typeof column.render === 'function') {
-              return column.render(data.value)
-            }
-            return (
-              <NpFormItem
-                column={column}
-                isLastColumn={columnIdx === lastItemIdx.value}
-                injectKey={injectKey}
-              ></NpFormItem>
-            )
-          })}
-          {footer()}
+          <NGrid {...gridConfig.value}>
+            {renderColumns()}
+            {footer()}
+          </NGrid>
         </NForm>
       </NSpin>
     )
