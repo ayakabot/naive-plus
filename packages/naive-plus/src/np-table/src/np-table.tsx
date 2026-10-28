@@ -279,8 +279,11 @@ export default defineComponent({
         list.splice(0, 0, selectionColumn)
       }
       if (props.option.operation !== false) {
+        // provider 中的列属性（如 width / align / fixed）作为操作列默认值，
+        // option.operation 中的同名属性优先级更高；
         // onBefore / defaultOptions 由组件内部消费，这里移除，避免误传给列对象
         const operation: Record<string, any> = {
+          ...(config.value?.operation ?? {}),
           ...(props.option.operation ?? {}),
         }
         delete operation.onBefore
@@ -289,10 +292,7 @@ export default defineComponent({
         list.push({
           width: 80,
           ...operation,
-          title:
-            operation.label ??
-            config.value?.operation?.label ??
-            locale.value.Table.operation.label,
+          title: operation.label ?? locale.value.Table.operation.label,
           key: '__np_table_operation',
           render(rowData, rowIndex) {
             return (

@@ -772,6 +772,42 @@ describe('NpConfigProvider locale', () => {
     })
   })
 
+  test('Table: provider 中的 operation 列属性作为操作列默认值', async () => {
+    const wrapper = mountWithProvider(
+      {
+        Table: {
+          operation: { width: 120, align: 'center', fixed: 'right' },
+        },
+      },
+      () => (
+        <NConfigProvider>
+          <NpTable
+            option={{
+              api: {
+                fetch: async () => ({ items: [{ id: 1, name: 'a' }] }),
+              },
+              columns: [{ key: 'name', label: '姓名' }],
+              operation: { width: 160 },
+            }}
+          />
+        </NConfigProvider>
+      )
+    )
+    await flushPromises()
+
+    const operationColumn = (
+      wrapper.findComponent(NDataTable).props('columns') as Array<
+        Record<string, any>
+      >
+    ).find(column => column.key === '__np_table_operation')
+    // provider 提供默认值，option.operation 中的同名属性优先
+    expect(operationColumn).toMatchObject({
+      width: 160,
+      align: 'center',
+      fixed: 'right',
+    })
+  })
+
   test('Table: option.operation.defaultOptions 优先于 provider', async () => {
     const wrapper = mountWithProvider(
       { Table: { operation: { defaultOptions: { edit: { label: '修改' } } } } },
