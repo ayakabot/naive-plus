@@ -11,7 +11,8 @@ export const npCellProps = {
   },
   checked: {
     type: Boolean,
-    default: false,
+    // default: undefined 可关闭 Vue 对 Boolean prop 的默认值转换（未传时不会变成 false）
+    default: undefined,
   },
   icon: {
     type: [Object, Function] as PropType<CustomVNode>,
@@ -31,16 +32,33 @@ export const npCellProps = {
   },
   arrow: {
     type: Boolean,
-    default: false,
+    default: undefined,
   },
   bordered: {
     type: Boolean,
-    default: false,
+    default: undefined,
   },
   size: {
     type: String as PropType<'small' | 'medium' | 'large'>,
-    default: 'medium',
   },
 }
 
 export type NpCellProps = ExtractPropTypes<typeof npCellProps>
+
+/**
+ * 组件内置默认值，可通过 np-config-provider 覆盖
+ */
+export const npCellDefaults: Partial<NpCellProps> = {
+  checked: false,
+  arrow: false,
+  bordered: false,
+  size: 'medium',
+}
+
+/**
+ * 仅开放展示类属性。内容（label/value/description/icon/footer）、
+ * 状态（checked）与控件类型（type）由使用场景决定，不支持全局配置
+ */
+export type NpCellConfigProps = Partial<
+  Pick<NpCellProps, 'hover' | 'arrow' | 'bordered' | 'size'>
+>

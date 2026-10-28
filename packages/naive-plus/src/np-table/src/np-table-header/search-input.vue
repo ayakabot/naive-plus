@@ -23,6 +23,7 @@ import { debounce } from 'lodash-es'
 import { NIcon, NInput } from 'naive-ui'
 import type { TableSearchOption } from '../interface'
 import SearchIcon from '../icon/search.vue'
+import { useLocale } from '../../../_hooks/config'
 
 const props = defineProps<{
   option: TableSearchOption
@@ -31,6 +32,8 @@ const props = defineProps<{
 
 const bemClass = 'np-table__search'
 
+const locale = useLocale()
+
 const value = ref('')
 /**
  * 上一次提交的值，避免清空等场景重复触发搜索
@@ -38,7 +41,7 @@ const value = ref('')
 const emittedValue = ref('')
 
 const placeholder = computed(
-  () => props.option.placeholder ?? '请输入关键词搜索'
+  () => props.option.placeholder ?? locale.value.Table.search.placeholder
 )
 const clearable = computed(() => props.option.clearable ?? true)
 const inputWidth = computed(() => {

@@ -34,6 +34,26 @@ Use `options` to configure dropdown menu items, and use `onSelect` to handle cli
 
 <demo src="../__demos__/operation-options-function.en.vue"></demo>
 
+## Default Option Config
+
+When `options` only contains `{ type: 'edit' }` / `{ type: 'del' }`, the built-in items are reused. Use `defaultOptions` to override their texts and props (merged per `edit` / `del`, so overriding only `label` keeps the built-in `key`), while the same fields in `options` take priority.
+
+```ts
+const option: TableOption = {
+  // ...
+  operation: {
+    defaultOptions: {
+      edit: { label: 'Edit', key: 'edit' },
+      del: { label: 'Delete', key: 'delete' },
+    },
+  },
+}
+```
+
+> Without `defaultOptions`, the texts come from the [locale](/en/components/np-config-provider/#locale) of `NpConfigProvider`; they can also be set globally through `Table.operation` of `NpConfigProvider`.
+
+> Note: the built-in `del.label` is a render function that renders `NText type="error"`. Passing a string in the example above replaces that render function, so the delete item loses its red text style. Render `NText type="error"` yourself if you want to keep it.
+
 ## Types
 
 ### operation
@@ -47,10 +67,15 @@ operation?:
       prefixRender?: (rowData: T, rowIndex: number) => VNode
       suffixRender?: (rowData: T, rowIndex: number) => VNode
       options?: TableOperationOption[] | ((rowData: T, rowIndex: number) => TableOperationOption[])
+      defaultOptions?: TableOperationDefaultOptions
       onSelect?: (key: string) => void | boolean
       onBefore?: (rowData: T, type: 'add' | 'edit' | 'del') => boolean | T | void | Promise<...>
     }
 ```
+
+### TableOperationDefaultOptions
+
+`Partial<Record<'edit' | 'del', Omit<TableOperationOption, 'type'>>>`, used to replace the defaults of the built-in edit / delete items.
 
 ### TableOperationOption
 

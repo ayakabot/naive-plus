@@ -23,7 +23,6 @@ export const npRadioProps = {
   valueField: makeStringProp('value'),
   type: {
     type: String as PropType<'default' | 'button'>,
-    default: 'default',
   },
   /**
    * 点击加载延迟 ms
@@ -31,7 +30,6 @@ export const npRadioProps = {
    */
   loadingDelay: {
     type: Number,
-    default: 250,
   },
   /**
    * 原 n-radio-group 属性
@@ -53,3 +51,19 @@ export const npRadioProps = {
 }
 
 export type NpRadioProps = ExtractPropTypes<typeof npRadioProps>
+
+/**
+ * 组件内置默认值，可通过 np-config-provider 覆盖
+ */
+export const npRadioDefaults: Partial<NpRadioProps> = {
+  type: 'default',
+  loadingDelay: 250,
+}
+
+/**
+ * `modelValue`（状态）、`options` / `labelField` / `valueField`（数据）
+ * 与 `onChange`（事件）不支持全局配置
+ */
+export type NpRadioConfigProps = Partial<
+  Pick<NpRadioProps, 'type' | 'loadingDelay' | 'props'>
+>

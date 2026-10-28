@@ -31,7 +31,7 @@ permalink: /components/np-button/
 | throttle-delay | 节流延迟 | number | 350 |
 | loading-delay | 加载延迟 | number | 250 |
 | click | 点击函数 | `() => Promise<void>` | - |
-| tyoe | 主题风格 | `primary/danger/warning/success` | default |
+| type | 主题风格 | `default/primary/warning/success/info/error` | default |
 | props | 其他按钮属性 | object -> [Button Props](https://www.naiveui.com/zh-CN/light/components/button#Button-Props) | |
 
 ### Events
@@ -53,3 +53,17 @@ permalink: /components/np-button/
 ```ts
 import type { NpButtonProps } from 'naive-plus'
 ```
+
+## 全局默认值
+
+可通过 [NpConfigProvider](/components/np-config-provider/) 统一修改默认值，组件自身传入的 prop 优先级更高。
+
+```vue
+<np-config-provider
+  :component-options="{ Button: { type: 'primary', props: { size: 'small' } } }"
+>
+  <np-button>按钮</np-button>
+</np-config-provider>
+```
+
+注意：`click` / `onClick` 属于使用组件时的业务行为，不支持全局配置。

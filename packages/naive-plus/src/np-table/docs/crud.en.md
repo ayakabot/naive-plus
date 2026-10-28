@@ -43,6 +43,8 @@ formProps?: Partial<FormColumn> & {
 
 `formProps.display` accepts a `boolean` or `(data) => boolean` to control the visibility of the form field. See [Display Control](/en/table/display/).
 
+`formProps` (including `addProps` and `editProps`) can also be configured globally via `Table.column.formProps` of [NpConfigProvider](/en/components/np-config-provider/); the per-column config takes precedence. `props` / `formItemProps` (including the ones inside `addProps` / `editProps`) are merged layer by layer instead of being replaced as a whole.
+
 ### operation.onBefore
 
 ```ts

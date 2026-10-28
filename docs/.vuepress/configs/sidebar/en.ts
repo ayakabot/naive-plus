@@ -19,6 +19,15 @@ export const en: SidebarConfig = {
         { text: 'CellGroup', link: '/en/components/np-cell-group/' },
       ],
     },
+    {
+      text: 'Global Config',
+      children: [
+        {
+          text: 'ConfigProvider',
+          link: '/en/components/np-config-provider/',
+        },
+      ],
+    },
   ],
   '/en/form': [
     {

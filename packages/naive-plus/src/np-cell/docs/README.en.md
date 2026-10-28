@@ -37,6 +37,8 @@ Use `bordered` to show the bottom border.
 | value | Cell value | `string \| VNode \| () => VNode` | - |
 | description | Cell description | `string \| VNode \| () => VNode` | - |
 | arrow | Whether to show the right arrow | `boolean` | `false` |
+| bordered | Whether to show the bottom border of the content area | `boolean` | `false` |
+| size | Cell size | `'small' \| 'medium' \| 'large'` | `'medium'` |
 
 ## Slots
 
@@ -49,3 +51,13 @@ Use `bordered` to show the bottom border.
 | Event | Description | Callback |
 | -------------- | -------------------- | ------------------------- |
 | update:checked | Triggered when the control state changes | `(value: boolean) => void` |
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to change the default props globally. Props passed to the component itself always win.
+
+```vue
+<np-config-provider :component-options="{ Cell: { size: 'large', arrow: true } }">
+  <np-cell label="Cell" />
+</np-config-provider>
+```

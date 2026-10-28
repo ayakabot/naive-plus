@@ -26,14 +26,14 @@ export const npCellGroupProps = {
   },
   size: {
     type: String as PropType<'small' | 'medium' | 'large'>,
-    default: 'medium',
   },
   type: {
     type: String as PropType<'checkbox' | 'radio' | 'switch'>,
   },
   bordered: {
     type: Boolean,
-    default: false,
+    // default: undefined 可关闭 Vue 对 Boolean prop 的默认值转换（未传时不会变成 false）
+    default: undefined,
   },
   options: {
     type: Array as PropType<NpCellGroupOption[]>,
@@ -42,3 +42,19 @@ export const npCellGroupProps = {
 }
 
 export type NpCellGroupProps = ExtractPropTypes<typeof npCellGroupProps>
+
+/**
+ * 组件内置默认值，可通过 np-config-provider 覆盖
+ */
+export const npCellGroupDefaults: Partial<NpCellGroupProps> = {
+  size: 'medium',
+  bordered: false,
+}
+
+/**
+ * `keys`（状态）、`options` / `title`（数据与内容）与 `type`（控件类型）
+ * 不支持全局配置
+ */
+export type NpCellGroupConfigProps = Partial<
+  Pick<NpCellGroupProps, 'size' | 'bordered'>
+>

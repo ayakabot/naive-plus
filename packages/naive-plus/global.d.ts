@@ -11,5 +11,6 @@ declare module '@vue/runtime-core' {
     NpTable: typeof import('naive-plus')['NpTable']
     NpCell: typeof import('naive-plus')['NpCell']
     NpCellGroup: typeof import('naive-plus')['NpCellGroup']
+    NpConfigProvider: typeof import('naive-plus')['NpConfigProvider']
   }
 }

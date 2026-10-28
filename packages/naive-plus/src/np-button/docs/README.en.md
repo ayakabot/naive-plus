@@ -32,7 +32,7 @@ Use the `:click` prop to replace the original `@click` event.
 | throttle-delay | Throttle delay in ms | number | 350 |
 | loading-delay | Loading delay in ms | number | 250 |
 | click | Click handler | `() => Promise<void>` | - |
-| type | Theme style | `primary/danger/warning/success` | default |
+| type | Theme style | `default/primary/warning/success/info/error` | default |
 | props | Other button props | object -> [Button Props](https://www.naiveui.com/en-US/light/components/button#Button-Props) | |
 
 ### Events
@@ -54,3 +54,17 @@ The component exports the following type definitions:
 ```ts
 import type { NpButtonProps } from 'naive-plus'
 ```
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to change the default props globally. Props passed to the component itself always win.
+
+```vue
+<np-config-provider
+  :component-options="{ Button: { type: 'primary', props: { size: 'small' } } }"
+>
+  <np-button>Button</np-button>
+</np-config-provider>
+```
+
+Note: `click` / `onClick` belong to the usage behavior and cannot be set globally.

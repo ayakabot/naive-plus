@@ -36,3 +36,9 @@ export const npUploadProps = {
 }
 
 export type NpUploadProps = ExtractPropTypes<typeof npUploadProps>
+
+/**
+ * `modelValue`（状态）、`urlOnly`（数据格式约定）与 `onChange`（事件）
+ * 不支持全局配置
+ */
+export type NpUploadConfigProps = Partial<Pick<NpUploadProps, 'props'>>

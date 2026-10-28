@@ -60,3 +60,22 @@ import type { FormOption } from 'naive-plus'
 | options | Dictionary options, e.g. checkbox, select, etc. | `Array<any>` / `()=>Promise<Array<any>>` | - |
 | props | Component props, passed through to the actual component | object | - |
 | formItemProps | Form item props, passed through to `n-form-item-gi`; supports `span` / `offset` | object | - |
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to configure `enterSubmitMode` / `grid` / `props` and the default `column` of every form item. The same config in `option` always wins.
+
+```vue
+<np-config-provider
+  :component-options="{
+    Form: {
+      enterSubmitMode: 'all',
+      grid: { cols: 24, xGap: 12 },
+      props: { labelWidth: 100 },
+      column: { formItemProps: { labelWidth: 100 }, props: { size: 'small' } },
+    },
+  }"
+>
+  <np-form v-model="data" :option="option" />
+</np-config-provider>
+```

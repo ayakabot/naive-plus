@@ -30,7 +30,6 @@ export const npCheckboxProps = {
    */
   loadingDelay: {
     type: Number,
-    default: 250,
   },
   /**
    * 原 t-checkbox-group 属性
@@ -52,3 +51,18 @@ export const npCheckboxProps = {
 }
 
 export type NpCheckboxProps = ExtractPropTypes<typeof npCheckboxProps>
+
+/**
+ * 组件内置默认值，可通过 np-config-provider 覆盖
+ */
+export const npCheckboxDefaults: Partial<NpCheckboxProps> = {
+  loadingDelay: 250,
+}
+
+/**
+ * `modelValue`（状态）、`options` / `labelField` / `valueField`（数据）
+ * 与 `onChange`（事件）不支持全局配置
+ */
+export type NpCheckboxConfigProps = Partial<
+  Pick<NpCheckboxProps, 'loadingDelay' | 'props'>
+>

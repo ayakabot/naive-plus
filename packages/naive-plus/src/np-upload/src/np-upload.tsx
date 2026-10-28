@@ -1,5 +1,6 @@
 import { computed, defineComponent, inject, onUnmounted, ref, watch } from 'vue'
 import { useCreate } from '../../_hooks/create'
+import { useConfigProps, useLocale } from '../../_hooks/config'
 import { npUploadProps } from './props'
 import { NButton, NUpload } from 'naive-ui'
 import type { UploadCustomRequestOptions, UploadFileInfo } from 'naive-ui'
@@ -8,8 +9,8 @@ import type { FormItemToolInjection } from '../..'
 
 const { name, bemClass } = useCreate('np-upload')
 
-const isImageCard = (props: { props?: { listType?: string } }) =>
-  props.props?.listType === 'image-card'
+const isImageCard = (options: { props?: { listType?: string } }) =>
+  options.props?.listType === 'image-card'
 
 const fileListToModelValue = (
   fileList: UploadFileInfo[],
@@ -63,10 +64,21 @@ export default defineComponent({
   props: npUploadProps,
   emits: ['update:modelValue'],
   setup(props, { emit, slots }) {
-    const imageCard = isImageCard(props)
+    // prop > np-config-provider > 内置默认值
+    const merged = useConfigProps('Upload', props, {}, ['props'])
+    // np-config-provider 注入的文案
+    const locale = useLocale()
+    const imageCard = computed(() => isImageCard(merged.value))
     const blobUrls = new Set<string>()
+    // `modelValue` 的格式由转换时的 `imageCard` 决定，因此 fileList 只在初始化与
+    // `modelValue` 变化时转换；provider 运行期改变 `listType` 时不重新解析既有字符串，
+    // 避免把已按旧格式存储的数据误判为新格式（后续上传会按新配置输出，自动收敛）
     const fileList = ref<UploadFileInfo[]>(
-      modelValueToFileList(props.modelValue || [], props.urlOnly, imageCard)
+      modelValueToFileList(
+        props.modelValue || [],
+        props.urlOnly,
+        imageCard.value
+      )
     )
 
     let isInternalChange = false
@@ -96,7 +108,7 @@ export default defineComponent({
         fileList.value = modelValueToFileList(
           val || [],
           props.urlOnly,
-          imageCard
+          imageCard.value
         )
         revokeRemovedBlobUrls(fileList.value.map(f => f.url))
       },
@@ -123,9 +135,10 @@ export default defineComponent({
       const modelValue = fileListToModelValue(
         processedFiles,
         props.urlOnly,
-        imageCard
+        imageCard.value
       )
       emit('update:modelValue', modelValue)
+      // 改变事件属于使用时的业务逻辑，只取组件自身的 props
       props.onChange?.(modelValue, processedFiles)
     }
 
@@ -134,20 +147,22 @@ export default defineComponent({
     })
 
     const handleCustomRequest = (options: UploadCustomRequestOptions): void => {
-      if (props.props?.customRequest !== undefined) {
-        props.props.customRequest(options)
+      const naiveProps = merged.value.props
+      if (naiveProps?.customRequest !== undefined) {
+        naiveProps.customRequest(options)
         return
       }
-      if (props.props?.action === undefined) {
+      if (naiveProps?.action === undefined) {
         return
       }
-      customRequest(options, props.props)
+      customRequest(options, naiveProps)
         .then(() => {
           formItemTool?.setFeedback?.()
         })
         .catch(err => {
+          const message = err.message || locale.value.Upload.unknownError
           formItemTool?.setFeedback?.(
-            '上传失败: ' + (err.message || '未知错误'),
+            `${locale.value.Upload.uploadFailedTip}: ${message}`,
             'error'
           )
         })
@@ -155,23 +170,27 @@ export default defineComponent({
 
     const acceptCompute = computed(() => {
       return (
-        props.props?.accept ||
-        (imageCard ? 'image/png, image/jpeg, image/jpg, image/webp' : undefined)
+        merged.value.props?.accept ||
+        (imageCard.value
+          ? 'image/png, image/jpeg, image/jpg, image/webp'
+          : undefined)
       )
     })
 
     return () => (
       <div class={bemClass.value}>
         <NUpload
-          {...props.props}
-          responseType={props.props?.responseType ?? 'json'}
+          {...merged.value.props}
+          responseType={merged.value.props?.responseType ?? 'json'}
           fileList={fileList.value}
-          listType={props.props?.listType ?? 'image'}
+          listType={merged.value.props?.listType ?? 'image'}
           onUpdateFileList={handleUpdateFileList}
           customRequest={handleCustomRequest}
           accept={acceptCompute.value}
         >
-          {slots.default?.() ?? <NButton>上传文件</NButton>}
+          {slots.default?.() ?? (
+            <NButton>{locale.value.Upload.uploadBtnText}</NButton>
+          )}
         </NUpload>
       </div>
     )

@@ -320,6 +320,40 @@ export type FormColumnComponent<FormData extends AnyObject = AnyObject> =
 export type FormColumn<FormData extends AnyObject = AnyObject> =
   FormColumnBase<FormData> & FormColumnComponent<FormData>
 
+/**
+ * 底部配置
+ */
+export interface FormFooterProps<FormData extends AnyObject = AnyObject> {
+  formItemProps?: FormGridItemProps
+  style?: CSSProperties
+  prefixRender?: (data: FormData) => VNode
+  suffixRender?: (data: FormData) => VNode
+  /**
+   * 底部内容对齐方式
+   * - `'left'`: 靠左对齐
+   * - `'right'`: 靠右对齐，校验反馈信息同步靠右
+   * @defaultValue left
+   */
+  align?: 'left' | 'right'
+  /**
+   * 提交（onSubmit）异常时，是否将错误信息展示在底部表单项的校验反馈中
+   * @defaultValue true
+   */
+  submitErrorFeedback?: boolean
+  submitBtn?:
+    | false
+    | {
+        text?: string
+        props?: Omit<ButtonProps, 'type' | 'onClick'>
+      }
+  resetBtn?:
+    | false
+    | {
+        text?: string
+        props?: Omit<ButtonProps, 'onClick'>
+      }
+}
+
 export interface FormOption<FormData extends AnyObject = AnyObject> {
   onSubmit?: Run<FormData, void>
   onReset?: Run<FormData, void>
@@ -349,38 +383,7 @@ export interface FormOption<FormData extends AnyObject = AnyObject> {
   grid?: Partial<GridProps>
   columns: FormColumn<FormData>[]
   props?: Omit<FormProps, 'model' | 'rules' | 'onSubmit'>
-  footer?:
-    | false
-    | {
-        formItemProps?: FormGridItemProps
-        style?: CSSProperties
-        prefixRender?: (data: FormData) => VNode
-        suffixRender?: (data: FormData) => VNode
-        /**
-         * 底部内容对齐方式
-         * - `'left'`: 靠左对齐
-         * - `'right'`: 靠右对齐，校验反馈信息同步靠右
-         * @defaultValue left
-         */
-        align?: 'left' | 'right'
-        /**
-         * 提交（onSubmit）异常时，是否将错误信息展示在底部表单项的校验反馈中
-         * @defaultValue true
-         */
-        submitErrorFeedback?: boolean
-        submitBtn?:
-          | false
-          | {
-              text?: string
-              props?: Omit<ButtonProps, 'type' | 'onClick'>
-            }
-        resetBtn?:
-          | false
-          | {
-              text?: string
-              props?: Omit<ButtonProps, 'onClick'>
-            }
-      }
+  footer?: false | FormFooterProps<FormData>
 }
 
 export interface FormInst extends NFormInst {
@@ -424,4 +427,41 @@ export interface FormItemToolInjection {
     feedback?: string,
     status?: 'error' | 'success' | 'warning'
   ) => void
+}
+
+export interface NpFormColumnConfigProps {
+  /** 所有表单项默认的控件属性，需按 `type` 选择合法属性 */
+  props?: AnyObject
+  /** 所有表单项默认的表单项属性（`labelWidth` / `labelPlacement` / `span` 等） */
+  formItemProps?: FormGridItemProps
+}
+
+/**
+ * `NpForm` 底部的全局默认配置
+ *
+ * `prefixRender` / `suffixRender` 属于内容渲染，不支持全局配置；
+ * 需要隐藏整个底部时请在使用处传 `footer: false`。
+ */
+export type NpFormFooterConfigProps = Omit<
+  FormFooterProps,
+  'prefixRender' | 'suffixRender'
+>
+
+/**
+ * `NpForm` 全局默认配置
+ *
+ * 只挑出适合全局统一的字段；`columns` / `onSubmit` / `onReset` 等由使用场景决定，
+ * `footer: false`（隐藏整个底部）同理不开放。
+ */
+export interface NpFormConfigProps {
+  /** 回车提交模式 */
+  enterSubmitMode?: FormOption['enterSubmitMode']
+  /** 栅格布局配置 */
+  grid?: FormOption['grid']
+  /** 透传给 `n-form` 的属性 */
+  props?: FormOption['props']
+  /** 每一个表单项的默认配置 */
+  column?: NpFormColumnConfigProps
+  /** 底部的默认配置，`option.footer` 中的同名配置优先级更高 */
+  footer?: NpFormFooterConfigProps
 }

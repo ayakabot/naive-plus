@@ -59,3 +59,22 @@ import type { FormOption } from 'naive-plus'
 | options | 字典项，例如 checkbox、select 等 | `Array<any>` / `()=>Promise<Array<any>>` | - |
 | props | 组件 Props，会透传给实际组件 | object | - |
 | formItemProps | 表单项 Props，会透传给 `n-form-item-gi`，支持 `span` / `offset` | object | - |
+
+## 全局默认值
+
+可通过 [NpConfigProvider](/components/np-config-provider/) 统一配置 `enterSubmitMode` / `grid` / `props`，以及每个表单项的默认 `column`，`option` 中的同名配置优先级更高。
+
+```vue
+<np-config-provider
+  :component-options="{
+    Form: {
+      enterSubmitMode: 'all',
+      grid: { cols: 24, xGap: 12 },
+      props: { labelWidth: 100 },
+      column: { formItemProps: { labelWidth: 100 }, props: { size: 'small' } },
+    },
+  }"
+>
+  <np-form v-model="data" :option="option" />
+</np-config-provider>
+```

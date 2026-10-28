@@ -1,5 +1,5 @@
 <template>
-  <div :class="`${bemClass} ${bemClass}__${props.size}`">
+  <div :class="`${bemClass} ${bemClass}__${merged.size}`">
     <div v-if="props.title" :class="`${bemClass}__title`">
       {{ props.title }}
     </div>
@@ -13,8 +13,8 @@
       :hover="item.hover"
       :arrow="item.arrow"
       :type="props.type"
-      :size="props.size"
-      :bordered="props.bordered && idx < props.options.length - 1"
+      :size="merged.size"
+      :bordered="merged.bordered && idx < props.options.length - 1"
       :checked="selectedKeys.includes(getKey(item, idx))"
       :footer="item.footer"
       @click="handleClick(item, idx)"
@@ -23,7 +23,9 @@
 </template>
 <script setup lang="ts">
 import { useCreate } from '../../_hooks/create'
+import { useConfigProps } from '../../_hooks/config'
 import {
+  npCellGroupDefaults,
   npCellGroupProps,
   type NpCellGroupKey,
   type NpCellGroupKeys,
@@ -35,6 +37,9 @@ import { ref, watch } from 'vue'
 const { bemClass } = useCreate('np-cell-group')
 
 const props = defineProps(npCellGroupProps)
+
+// prop > np-config-provider > 内置默认值
+const merged = useConfigProps('CellGroup', props, npCellGroupDefaults)
 
 const emit = defineEmits<{
   (e: 'update:keys', keys: NpCellGroupKeys): void

@@ -3,10 +3,10 @@
     v-model:show="visible"
     preset="dialog"
     type="warning"
-    title="确认删除"
-    content="确定要删除该条数据吗？此操作不可恢复。"
-    positive-text="确认删除"
-    negative-text="取消"
+    :title="locale.Table.deleteDialog.title"
+    :content="locale.Table.deleteDialog.content"
+    :positive-text="locale.Table.deleteDialog.confirmText"
+    :negative-text="locale.Table.deleteDialog.cancelText"
     :auto-focus="false"
     :positive-button-props="{ type: 'error', loading }"
     @positive-click="handleConfirm"
@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { NModal } from 'naive-ui'
+import { useLocale } from '../../../_hooks/config'
 import type { AnyObject } from '../../../types'
 
 const props = defineProps<{
@@ -29,6 +30,9 @@ const emit = defineEmits<{
   'update:visible': [value: boolean]
   confirm: [row: AnyObject]
 }>()
+
+/** np-config-provider 注入的文案 */
+const locale = useLocale()
 
 const visible = computed({
   get: () => props.visible,

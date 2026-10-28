@@ -53,3 +53,15 @@ A table filter component that supports a two-level filter interaction.
 | ------------- | ----------------- | --------------------------------------- |
 | change | Triggered when filters change | `(params: Record<string, any>) => void` |
 | update:params | Triggered when params update | `(params: Record<string, any>) => void` |
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to change the default `trigger` / `placement`. Props passed to the component itself always win.
+
+```vue
+<np-config-provider
+  :component-options="{ Filter: { trigger: 'hover', placement: 'right' } }"
+>
+  <np-filter v-model:params="params" :items="items" />
+</np-config-provider>
+```

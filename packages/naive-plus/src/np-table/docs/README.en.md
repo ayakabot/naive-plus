@@ -67,3 +67,21 @@ import type {
 | props     | Column props passed through to `n-data-table` (e.g. `width`, `minWidth`, `fixed`)                  | object                         | -       |
 | display   | Whether to display the column in the table; `false` hides it entirely (often for form-only fields) | boolean                        | true    |
 | formProps | Form field config, see [CRUD](/en/table/crud/#formprops)                                           | object                         | -       |
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to configure `rowKey` / `props` / `formProps` / `operation` and the default `column` of every column (`props` into column props, `formProps` into the CRUD form column config). The same config in `option` always wins.
+
+```vue
+<np-config-provider
+  :component-options="{
+    Table: {
+      rowKey: 'id',
+      props: { size: 'small' },
+      column: { props: { align: 'center' }, formProps: { props: { size: 'small' } } },
+    },
+  }"
+>
+  <np-table :option="option" />
+</np-config-provider>
+```

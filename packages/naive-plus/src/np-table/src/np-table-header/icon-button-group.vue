@@ -39,7 +39,7 @@
     <div style="min-width: 120px">
       <NpCellGroup
         size="small"
-        title="显示设置"
+        :title="displayTitle"
         :options="displayOptions"
       ></NpCellGroup>
     </div>
@@ -71,6 +71,7 @@ import FilterIcon from '../icon/filter.vue'
 import DisplayIcon from '../icon/display.vue'
 import RefreshIcon from '../icon/refresh.vue'
 import { NpCellGroup, type NpCellGroupOption } from '../../../np-cell-group'
+import { useLocale } from '../../../_hooks/config'
 
 const props = defineProps<{
   filters?: NpFilterItem[]
@@ -83,6 +84,10 @@ const emit = defineEmits<{
 }>()
 
 const bemClass = 'np-table__header-right'
+
+const locale = useLocale()
+/** 显隐设置弹窗标题 */
+const displayTitle = computed(() => locale.value.Table.display.title)
 
 // 外层可能未提供 NMessageProvider，此时 useMessage 会抛错，提示功能降级为静默
 let message: MessageApi | undefined
@@ -104,7 +109,7 @@ const handleColumnDisplay = (key: string, val: boolean) => {
   const displayCount = props.columns.filter(col => col.display !== false).length
   if (displayCount === 1 && !val) {
     // 最后一个显示的列不允许隐藏
-    message?.warning('至少保留一列显示')
+    message?.warning(locale.value.Table.display.keepOneTip)
     return
   }
   props.columns.forEach(col => {

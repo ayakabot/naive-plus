@@ -16,7 +16,6 @@ export const npButtonProps = {
    */
   loadingDelay: {
     type: Number,
-    default: 250,
   },
   /**
    * 节流延迟 ms
@@ -24,17 +23,15 @@ export const npButtonProps = {
    */
   throttleDelay: {
     type: Number,
-    default: 350,
   },
   /**
    * 主题
-   * @defaultValue tertiary
+   * @defaultValue default
    */
   type: {
     type: String as PropType<
       'default' | 'primary' | 'warning' | 'success' | 'info' | 'error'
     >,
-    default: 'default',
   },
   /**
    * 原 t-button 属性
@@ -52,3 +49,19 @@ export const npButtonProps = {
 }
 
 export type NpButtonProps = ExtractPropTypes<typeof npButtonProps>
+
+/**
+ * 组件内置默认值，可通过 np-config-provider 覆盖
+ */
+export const npButtonDefaults: Partial<NpButtonProps> = {
+  loadingDelay: 250,
+  throttleDelay: 350,
+  type: 'default',
+}
+
+/**
+ * `click` / `onClick` 属于使用组件时的业务行为，不支持全局配置
+ */
+export type NpButtonConfigProps = Partial<
+  Omit<NpButtonProps, 'click' | 'onClick'>
+>

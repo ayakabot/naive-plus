@@ -10,9 +10,11 @@
     <np-form ref="formRef" v-model="innerData" :option="formOption" />
     <template #footer>
       <div style="display: flex; gap: 8px; justify-content: flex-end">
-        <n-button :disabled="loading" @click="handleCancel">取消</n-button>
+        <n-button :disabled="loading" @click="handleCancel">
+          {{ locale.Table.dialog.cancelText }}
+        </n-button>
         <n-button type="primary" :loading="loading" @click="handleSubmit">
-          确认
+          {{ locale.Table.dialog.confirmText }}
         </n-button>
       </div>
     </template>
@@ -23,7 +25,8 @@
 import { computed, ref, watch } from 'vue'
 import { NButton, NModal } from 'naive-ui'
 import NpForm from '../../../np-form'
-import { buildFormColumns, getFormTitle, type CrudMode } from '../use-crud'
+import { buildFormColumns, type CrudMode } from '../use-crud'
+import { useLocale } from '../../../_hooks/config'
 import type { TableColumn } from '../interface'
 import type { FormOption } from '../../../np-form'
 import type { AnyObject } from '../../../types'
@@ -37,6 +40,8 @@ const props = defineProps<{
   modelValue: AnyObject
   loading: boolean
   formProps?: FormOption['props']
+  /** 所有列默认的表单属性，来自 np-config-provider */
+  columnFormProps?: TableColumn['formProps']
 }>()
 
 const emit = defineEmits<{
@@ -46,6 +51,9 @@ const emit = defineEmits<{
 }>()
 
 const formRef = ref()
+
+/** np-config-provider 注入的文案 */
+const locale = useLocale()
 
 const show = computed({
   get: () => props.visible,
@@ -57,12 +65,16 @@ const innerData = computed({
   set: val => emit('update:modelValue', val),
 })
 
-const title = computed(() => getFormTitle(props.mode))
+const title = computed(() =>
+  props.mode === 'add'
+    ? locale.value.Table.dialog.addTitle
+    : locale.value.Table.dialog.editTitle
+)
 
 const formOption = computed<FormOption>(() => ({
   footer: false,
   props: props.formProps,
-  columns: buildFormColumns(props.columns, props.mode),
+  columns: buildFormColumns(props.columns, props.mode, props.columnFormProps),
 }))
 
 watch(

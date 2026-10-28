@@ -8,6 +8,7 @@ import {
   type VNode,
 } from 'vue'
 import { useCreate } from '../../_hooks/create'
+import { useLocale } from '../../_hooks/config'
 import { npFormItemProps } from './props'
 import {
   NAutoComplete,
@@ -68,6 +69,7 @@ const NpFormItem = defineComponent({
     })
 
     const { type } = props.column || {}
+    const locale = useLocale()
     const columnKey = props.column.key || '_unknown'
     /** 栅格占位，未指定 span 时占满整行 */
     const gridItemProps = computed(() =>
@@ -95,7 +97,7 @@ const NpFormItem = defineComponent({
           }
         })
         if (hasBlobUrl) {
-          return new Error('文件上传未完成')
+          return new Error(locale.value.Form.uploadPendingTip)
         }
         return true
       },

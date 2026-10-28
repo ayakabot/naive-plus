@@ -58,7 +58,7 @@ import type { TableSearchOption } from 'naive-plus'
 | Prop        | Description                                                          | Type               | Default                |
 | ----------- | -------------------------------------------------------------------- | ------------------ | ---------------------- |
 | key         | Query param name passed to `api.fetch`                               | string             | `keyword`              |
-| placeholder | Input placeholder                                                    | string             | `Please enter keyword` |
+| placeholder | Input placeholder                                                    | string             | `Table.search.placeholder` of the locale |
 | width       | Input width                                                          | `string \| number` | `220`                  |
 | clearable   | Whether the input is clearable                                       | boolean            | `true`                 |
 | debounce    | Debounce time (ms); search triggers automatically after typing stops | number             | `300`                  |

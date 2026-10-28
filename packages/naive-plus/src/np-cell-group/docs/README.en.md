@@ -9,7 +9,7 @@ A cell group that batch-renders NpCell via the `options` config, with optional g
 
 ## Basic Usage
 
-`options` supports all `np-cell` props.
+`options` supports a subset of `np-cell` props, see `NpCellGroupOption` below.
 
 <demo src="../__demos__/group.en.vue"></demo>
 
@@ -33,8 +33,8 @@ A cell group that batch-renders NpCell via the `options` config, with optional g
 | value | Cell value | `string \| VNode \| () => VNode` | - |
 | description | Cell description | `string \| VNode \| () => VNode` | - |
 | footer | Bottom content | `VNode \| () => VNode` | - |
-| hover | Whether to enable hover state | `boolean` | - |
-| arrow | Whether to show the right arrow | `boolean` | `false` |
+| hover | Whether to enable hover state, falls back to the `Cell` config of `NpConfigProvider` when omitted | `boolean` | - |
+| arrow | Whether to show the right arrow, falls back to the `Cell` config of `NpConfigProvider` when omitted | `boolean` | `false` (when no `Cell` config) |
 | onClick | Click callback | `() => void` | - |
 
 ## Events
@@ -43,3 +43,15 @@ A cell group that batch-renders NpCell via the `options` config, with optional g
 | ------ | ------------------ | ---------------------------- |
 | change | Triggered when the selection changes | `(keys: NpCellGroupKeys, item: NpCellGroupOption) => void` |
 | update:keys | Triggered when the control state changes | `(keys: NpCellGroupKeys) => void` |
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to change the default `size` / `bordered`. Props passed to the component itself always win; when `hover` / `arrow` are not set on an option, they fall back to the `Cell` config of `NpConfigProvider`.
+
+```vue
+<np-config-provider
+  :component-options="{ CellGroup: { size: 'small', bordered: true } }"
+>
+  <np-cell-group :options="options" />
+</np-config-provider>
+```

@@ -51,3 +51,17 @@ The component exports the following type definitions:
 ```ts
 import type { NpUploadProps } from 'naive-plus'
 ```
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to change the `props` passed to `n-upload` (such as `listType` / `accept` / `max` / `action`). Props passed to the component itself always win.
+
+> Changing `listType` at runtime does not re-parse the existing `modelValue`: uploaded data is still parsed with the `listType` used at initialization, so old-format data is never mistaken for the new format.
+
+```vue
+<np-config-provider
+  :component-options="{ Upload: { props: { listType: 'image-card' } } }"
+>
+  <np-upload v-model="value" />
+</np-config-provider>
+```

@@ -1,5 +1,6 @@
 import { computed, defineComponent, onMounted, ref, renderSlot } from 'vue'
 import { useCreate } from '../../_hooks/create'
+import { useConfigOptions, useLocale } from '../../_hooks/config'
 import { npTableProps } from './props'
 import {
   NButton,
@@ -18,11 +19,16 @@ import NpTableDelDialog from './components/np-table-del-dialog.vue'
 import type {
   NTableColumn,
   NTableColumnExt,
+  TableOperationDefaultOptions,
   TableSlotOption,
 } from './interface'
 import IconAdd from './icon/add.vue'
 import { sanitizeTableProps } from './use-table-props'
 import { useCrud } from './use-crud'
+import {
+  createOperationDefaults,
+  mergeOperationDefaults,
+} from './use-action-option'
 
 const { name, bemClass } = useCreate('np-table')
 
@@ -35,6 +41,10 @@ export default defineComponent({
   name,
   props: npTableProps,
   setup(props, { expose, slots }) {
+    /** np-config-provider 中的 Table 默认配置 */
+    const config = useConfigOptions('Table')
+    /** np-config-provider 注入的文案 */
+    const locale = useLocale()
     const loading = ref(false)
     const page = ref((props.option.pagination || {}).defaultPage || 1)
     const pageSize = ref((props.option.pagination || {}).defaultPageSize || 10)
@@ -50,9 +60,60 @@ export default defineComponent({
      */
     const params = ref<Record<string, any>>({})
     /**
-     * 表格 columns
+     * 列显隐的运行时覆盖，key 为列 key，值为是否显示
      */
-    const columns = ref<NTableColumnExt[]>([])
+    const columnDisplay = ref<Record<string, boolean>>({})
+    /**
+     * 表格 columns，合并 np-config-provider 中的列默认配置；
+     * 只排除配置层显式隐藏（display: false）的列，运行时隐藏的列仍保留，
+     * 以便在「显示设置」中重新开启
+     */
+    const columns = computed<NTableColumnExt[]>(() =>
+      props.option.columns
+        .filter(item => item.display !== false)
+        .map(item => ({
+          ...config.value?.column?.props,
+          ...item,
+          ...item.props,
+          title: item.label,
+          display: columnDisplay.value[item.key] ?? true,
+        }))
+    )
+
+    /**
+     * 合并列显隐设置，显隐状态不再依赖 columns 对象本身，保证 provider 配置变化时不会丢失；
+     * 合并而非整体替换，避免未出现在列表中的列显隐记录被丢弃
+     */
+    const handleUpdateColumns = (next: NTableColumnExt[]) => {
+      columnDisplay.value = {
+        ...columnDisplay.value,
+        ...Object.fromEntries(
+          next.map(item => [item.key, item.display !== false])
+        ),
+      }
+    }
+
+    /**
+     * 操作列配置，`false` 表示不渲染操作列
+     */
+    const operationOption = computed(() =>
+      props.option.operation === false ? undefined : props.option.operation
+    )
+
+    /**
+     * 内置编辑 / 删除操作项的默认配置
+     * 优先级：语言包文案 < provider 配置 < option 配置
+     */
+    const operationDefaultOptions = computed<TableOperationDefaultOptions>(
+      () => {
+        const { editLabel, delLabel } = locale.value.Table.operation
+        return mergeOperationDefaults(
+          createOperationDefaults({ editLabel, delLabel }),
+          config.value?.operation?.defaultOptions,
+          operationOption.value?.defaultOptions
+        )
+      }
+    )
 
     /**
      * 请求序号，仅接受最新一次请求的响应，避免过期响应覆盖新数据
@@ -111,17 +172,6 @@ export default defineComponent({
       return fetchData()
     }
 
-    const resetColumn = () => {
-      columns.value = props.option.columns
-        .map(item => ({
-          ...item,
-          ...item.props,
-          title: item.label,
-          display: item.display !== false,
-        }))
-        .filter(item => item.display)
-    }
-
     const {
       dialogVisible,
       delVisible,
@@ -133,10 +183,13 @@ export default defineComponent({
       openAction,
       handleSubmit,
       handleDel,
-    } = useCrud(() => props.option, fetchData)
+    } = useCrud(
+      () => props.option,
+      fetchData,
+      () => config.value?.column?.formProps
+    )
 
     onMounted(() => {
-      resetColumn()
       fetchData()
     })
 
@@ -169,11 +222,14 @@ export default defineComponent({
     })
 
     const tableProps = computed<DataTableProps>(() => {
-      const mergedProps = sanitizeTableProps(props.option.props)
+      const mergedProps = sanitizeTableProps({
+        ...config.value?.props,
+        ...props.option.props,
+      })
 
       return {
         rowKey: (item: Record<string, any>): string | number => {
-          return item[props.option.rowKey || 'id']
+          return item[props.option.rowKey ?? config.value?.rowKey ?? 'id']
         },
         bordered: false,
         remote: true,
@@ -223,16 +279,20 @@ export default defineComponent({
         list.splice(0, 0, selectionColumn)
       }
       if (props.option.operation !== false) {
-        // onBefore 由 useCrud 消费，这里复制 operation 并移除该字段，避免误传给列对象
+        // onBefore / defaultOptions 由组件内部消费，这里移除，避免误传给列对象
         const operation: Record<string, any> = {
           ...(props.option.operation ?? {}),
         }
         delete operation.onBefore
+        delete operation.defaultOptions
 
         list.push({
           width: 80,
           ...operation,
-          title: operation.label ?? '',
+          title:
+            operation.label ??
+            config.value?.operation?.label ??
+            locale.value.Table.operation.label,
           key: '__np_table_operation',
           render(rowData, rowIndex) {
             return (
@@ -240,6 +300,7 @@ export default defineComponent({
                 rowData={rowData}
                 rowIndex={rowIndex}
                 options={operation.options}
+                defaultOptions={operationDefaultOptions.value}
                 prefixRender={operation.prefixRender}
                 suffixRender={operation.suffixRender}
                 onSelect={key => {
@@ -298,14 +359,14 @@ export default defineComponent({
                       <IconAdd></IconAdd>
                     </NIcon>
                   ),
-                  default: () => <span>添加</span>,
+                  default: () => <span>{locale.value.Table.addBtnText}</span>,
                 }}
               </NButton>
             )}
             <IconButtonGroup
               filters={props.option.filters}
               columns={columns.value}
-              onUpdate:columns={next => (columns.value = next)}
+              onUpdate:columns={handleUpdateColumns}
               onRefresh={fetchData}
               onFilterChange={handleFilterChange}
             ></IconButtonGroup>
@@ -336,7 +397,8 @@ export default defineComponent({
           columns={props.option.columns}
           modelValue={formData.value}
           loading={dialogLoading.value}
-          formProps={props.option.formProps}
+          formProps={{ ...config.value?.formProps, ...props.option.formProps }}
+          columnFormProps={config.value?.column?.formProps}
           onUpdate:visible={(val: boolean) => (dialogVisible.value = val)}
           onUpdate:modelValue={(val: Record<string, any>) =>
             (formData.value = val)

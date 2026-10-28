@@ -3,17 +3,33 @@ import {
   defineComponent,
   getCurrentInstance,
   provide,
+  reactive,
   ref,
   watch,
   type StyleValue,
 } from 'vue'
 import { useCreate } from '../../_hooks/create'
+import { useConfigOptions, useLocale } from '../../_hooks/config'
 import { npFormProps } from './props'
-import { NForm, NFormItemGi, NGi, NGrid, NSpin, type FormInst } from 'naive-ui'
+import {
+  NForm,
+  NFormItemGi,
+  NGi,
+  NGrid,
+  NSpin,
+  type ButtonProps,
+  type FormInst,
+} from 'naive-ui'
 import NpFormItem from './np-form-item'
-import type { FormInjection } from './interface'
+import type {
+  FormColumn,
+  FormInjection,
+  FormOption,
+  NpFormColumnConfigProps,
+  NpFormFooterConfigProps,
+} from './interface'
 import { getGridItemProps } from './grid'
-import { cloneDeep, isEqual, throttle } from 'lodash-es'
+import { cloneDeep, isEqual, omit, throttle } from 'lodash-es'
 import NpButton from '../../np-button'
 import type { AnyObject } from '../../types'
 import { isFunction, runAsync } from '../../utils'
@@ -37,6 +53,80 @@ const getSubmitErrorMessage = (e: unknown): string | undefined => {
   return message ? String(message) : undefined
 }
 
+/**
+ * 合并全局默认配置与表单项自身的配置，表单项自身的配置优先级更高
+ * @param column 表单项
+ * @param columnConfig np-config-provider 中的表单项默认配置
+ * @returns 合并后的表单项
+ */
+const mergeFormColumn = (
+  column: FormColumn,
+  columnConfig?: NpFormColumnConfigProps
+): FormColumn => {
+  if (!columnConfig) {
+    return column
+  }
+  return {
+    ...column,
+    // `defaultValue` 属于状态类字段，不支持全局配置，避免所有表单项被写入同一默认值
+    props: {
+      ...omit(columnConfig.props ?? {}, ['defaultValue']),
+      ...column.props,
+    },
+    formItemProps: { ...columnConfig.formItemProps, ...column.formItemProps },
+  } as FormColumn
+}
+
+type FooterButtonOptions = {
+  text?: string
+  props?: Omit<ButtonProps, 'onClick'>
+}
+
+/**
+ * 合并底部按钮配置，底部自身传 `false` 表示不显示该按钮
+ * @param base 全局默认配置
+ * @param override 底部自身的配置
+ * @returns 合并后的按钮配置
+ */
+const mergeFooterButton = <T extends FooterButtonOptions>(
+  base: false | T | undefined,
+  override: false | T | undefined
+): false | T | undefined => {
+  if (override === false) {
+    return false
+  }
+  if (override === undefined) {
+    return base
+  }
+  if (base === false || base === undefined) {
+    return override
+  }
+  return { ...base, ...override, props: { ...base.props, ...override.props } }
+}
+
+/**
+ * 合并全局默认配置与底部自身的配置，底部自身的配置优先级更高
+ * @param footer 底部配置，`false` 表示隐藏整个底部
+ * @param footerConfig np-config-provider 中的底部默认配置
+ * @returns 合并后的底部配置
+ */
+const mergeFormFooter = (
+  footer: FormOption['footer'],
+  footerConfig?: NpFormFooterConfigProps
+): FormOption['footer'] => {
+  if (footer === false || !footerConfig) {
+    return footer
+  }
+  return {
+    ...footerConfig,
+    ...footer,
+    formItemProps: { ...footerConfig.formItemProps, ...footer?.formItemProps },
+    style: { ...footerConfig.style, ...footer?.style },
+    submitBtn: mergeFooterButton(footerConfig.submitBtn, footer?.submitBtn),
+    resetBtn: mergeFooterButton(footerConfig.resetBtn, footer?.resetBtn),
+  }
+}
+
 export default defineComponent({
   name,
   inheritAttrs: false,
@@ -44,6 +134,27 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const injectKey = Symbol('np-form-inject-key')
+    /** np-config-provider 中的 Form 默认配置 */
+    const config = useConfigOptions('Form')
+    /** np-config-provider 注入的文案 */
+    const locale = useLocale()
+    /**
+     * 合并全局默认配置后的表单配置，`option` 中的同名配置优先级更高
+     */
+    const mergedOption = computed<FormOption>(() => {
+      const option = props.option
+      const formConfig = config.value
+      return {
+        ...option,
+        enterSubmitMode: option.enterSubmitMode ?? formConfig?.enterSubmitMode,
+        grid: { ...formConfig?.grid, ...option.grid },
+        props: { ...formConfig?.props, ...option.props },
+        footer: mergeFormFooter(option.footer, formConfig?.footer),
+        columns: (option.columns || []).map(column =>
+          mergeFormColumn(column, formConfig?.column)
+        ),
+      }
+    })
     const data = ref<AnyObject>({})
     const backData = ref<AnyObject>({})
     const event = new EventBus<{
@@ -95,8 +206,8 @@ export default defineComponent({
     const footerValidationStatus = ref<'error' | 'success' | 'warning'>()
     const submitErrorFeedbackEnabled = computed(
       () =>
-        props.option.footer !== false &&
-        props.option.footer?.submitErrorFeedback !== false
+        mergedOption.value.footer !== false &&
+        mergedOption.value.footer?.submitErrorFeedback !== false
     )
 
     const clearFooterFeedback = () => {
@@ -117,7 +228,7 @@ export default defineComponent({
 
     const initDefaultValue = (val: AnyObject = {}) => {
       backData.value = cloneDeep(val)
-      props.option.columns?.forEach(column => {
+      mergedOption.value.columns?.forEach(column => {
         const key = column.key || '_unknown'
         if (
           column.defaultValue !== undefined &&
@@ -142,7 +253,7 @@ export default defineComponent({
      */
     const gridConfig = computed(() => ({
       itemResponsive: true,
-      ...props.option.grid,
+      ...mergedOption.value.grid,
     }))
 
     watch(
@@ -193,7 +304,8 @@ export default defineComponent({
 
     provide<FormInjection>(injectKey, {
       data,
-      props,
+      // 注入合并后的配置，使 np-form-item 能读取到全局默认值（如 enterSubmitMode / grid）
+      props: reactive({ option: mergedOption }),
       injectKey,
       event,
       submit,
@@ -204,7 +316,7 @@ export default defineComponent({
      * 用于 enterSubmitMode === 'last' 时判断回车是否提交
      */
     const lastItemIdx = computed(() => {
-      const columns = props.option.columns || []
+      const columns = mergedOption.value.columns || []
       for (let i = columns.length - 1; i >= 0; i--) {
         const column = columns[i]
         if (typeof column.render !== 'function' && column.display !== false) {
@@ -215,7 +327,7 @@ export default defineComponent({
     })
 
     const footer = () => {
-      if (props.option.footer === false) {
+      if (mergedOption.value.footer === false) {
         return undefined
       }
 
@@ -227,7 +339,10 @@ export default defineComponent({
         style = {},
         align = 'left',
         formItemProps,
-      } = props.option.footer || {}
+      } = mergedOption.value.footer || {}
+
+      /** 按钮文案：footer 自身配置 > 语言包 */
+      const footerText = locale.value.Form.footer
 
       const isAlignRight = align === 'right'
 
@@ -254,9 +369,9 @@ export default defineComponent({
       return (
         <NFormItemGi
           label=" "
-          show-label={props.option.props?.labelPlacement === 'left'}
+          show-label={mergedOption.value.props?.labelPlacement === 'left'}
           {...formItemProps}
-          {...getGridItemProps(props.option, formItemProps)}
+          {...getGridItemProps(mergedOption.value, formItemProps)}
           feedbackStyle={feedbackStyle}
           feedback={footerFeedback.value}
           validationStatus={footerValidationStatus.value}
@@ -270,12 +385,12 @@ export default defineComponent({
                 loadingDelay={250}
                 props={submitBtn.props}
               >
-                {submitBtn.text || '提交'}
+                {submitBtn.text || footerText.submitBtnText}
               </NpButton>
             ) : undefined}
             {resetBtn ? (
               <NpButton props={resetBtn.props} click={reset}>
-                {resetBtn.text || '重置'}
+                {resetBtn.text || footerText.resetBtnText}
               </NpButton>
             ) : undefined}
             {isFunction(suffixRender) ? suffixRender(data.value) : undefined}
@@ -286,9 +401,9 @@ export default defineComponent({
 
     /** 渲染表单项列表 */
     const renderColumns = () =>
-      (props.option.columns || []).map((column, columnIdx) => {
+      (mergedOption.value.columns || []).map((column, columnIdx) => {
         const gridItemProps = getGridItemProps(
-          props.option,
+          mergedOption.value,
           column.formItemProps
         )
         if (typeof column.render === 'function') {
@@ -316,7 +431,7 @@ export default defineComponent({
           ref={formExpose}
           model={data.value}
           class={bemClass.value}
-          {...props.option.props}
+          {...mergedOption.value.props}
           onSubmit={(e: Event) => {
             e?.preventDefault()
             submit()

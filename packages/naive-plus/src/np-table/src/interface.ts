@@ -7,7 +7,12 @@ import type {
 import type { AnyObject, AsyncValue } from '../../types'
 import type { DropdownOption, InputProps, PaginationProps } from 'naive-ui'
 import type { NpFilterItem } from '../../np-filter'
-import type { FormColumn, FormOption } from '../../np-form'
+import type {
+  FormColumn,
+  FormColumnBase,
+  FormColumnComponent,
+  FormOption,
+} from '../../np-form'
 
 export type NTableColumn<T extends AnyObject = AnyObject> = TableBaseColumn<T>
 // | TableSelectionColumn<T>
@@ -56,7 +61,7 @@ export interface TableSearchOption {
   key?: string
   /**
    * 输入框占位文本
-   * @default '请输入关键词搜索'
+   * @defaultValue 取语言包中的 `Table.search.placeholder`（zh 为 `请输入关键词搜索`）
    */
   placeholder?: string
   /**
@@ -83,6 +88,13 @@ export interface TableSearchOption {
 export type TableOperationOption = DropdownOption & {
   type?: 'edit' | 'del'
 }
+
+/**
+ * 内置操作项的默认配置，`edit` / `del` 分别对应编辑、删除
+ */
+export type TableOperationDefaultOptions = Partial<
+  Record<'edit' | 'del', Omit<TableOperationOption, 'type'>>
+>
 
 export type TableOperationOptions<T extends AnyObject = AnyObject> =
   | TableOperationOption[]
@@ -179,6 +191,14 @@ export interface TableOption<T extends AnyObject = AnyObject> {
         ) => VNode | VNode[] | undefined
 
         options?: TableOperationOptions<T>
+        /**
+         * 内置编辑 / 删除操作项的默认配置，逐项合并到内置默认值
+         * （只写 `label` 时仍会保留内置的 `key` 等字段）
+         *
+         * `options` 中只写 `{ type: 'edit' }` / `{ type: 'del' }` 时，
+         * 会与这里的配置合并，同名属性以 `options` 中的为准
+         */
+        defaultOptions?: TableOperationDefaultOptions
         onSelect?: (key: string, rowData: T, rowIndex: number) => void | boolean
 
         onBefore?: (
@@ -213,4 +233,83 @@ export interface TableOption<T extends AnyObject = AnyObject> {
    */
   search?: false | TableSearchOption
   slots?: TableSlotOption
+}
+
+/**
+ * 列自身专属的字段：内容（`label` / `key` / `render` / `slots`）、
+ * 数据源（`options`）、数据契约（`rule` / `urlOnly`）、
+ * 状态（`defaultValue`）与事件（`onChange`）
+ */
+type ColumnOwnKeys =
+  | 'label'
+  | 'key'
+  | 'render'
+  | 'slots'
+  | 'options'
+  | 'rule'
+  | 'urlOnly'
+  | 'defaultValue'
+  | 'onChange'
+
+/**
+ * 去掉列自身专属的字段，保留联合类型的结构
+ */
+type OmitColumnOwnKeys<T> = T extends unknown ? Omit<T, ColumnOwnKeys> : never
+
+/**
+ * 全局可配置的列表单字段：`type` / `props` / `formItemProps` / `display`，
+ * 并保留 `type` 与 `props` 的对应关系
+ */
+type ColumnFormPropsBase = OmitColumnOwnKeys<Partial<FormColumnBase>> &
+  OmitColumnOwnKeys<Partial<FormColumnComponent>>
+
+/**
+ * 全局列表单配置：只提供展示属性，不允许覆盖列自身的内容 / 数据源 /
+ * 数据契约 / 状态 / 事件字段
+ */
+export type NpTableColumnFormConfigProps = ColumnFormPropsBase & {
+  /** 新增弹窗的列表单属性 */
+  addProps?: ColumnFormPropsBase
+  /** 编辑弹窗的列表单属性 */
+  editProps?: ColumnFormPropsBase
+}
+
+export interface NpTableColumnConfigProps {
+  /** 所有列默认的 naive-ui 列属性，列自身 `props` 优先级更高；`children` 属于列自身结构，不支持全局配置 */
+  props?: Omit<TableColumn['props'], 'children'>
+  /**
+   * 所有列默认的表单属性（新增 / 编辑弹窗），列自身 `formProps` 优先级更高；
+   * 列自身专属的字段（内容 / 数据源 / 数据契约 / 状态 / 事件）不支持全局配置，
+   * 具体见 `NpTableColumnFormConfigProps`
+   */
+  formProps?: NpTableColumnFormConfigProps
+}
+
+/**
+ * `NpTable` 操作列的全局默认配置
+ */
+export interface NpTableOperationConfigProps {
+  /** 操作列标题 */
+  label?: string
+  /** 内置编辑 / 删除操作项的默认配置 */
+  defaultOptions?: TableOperationDefaultOptions
+}
+
+/**
+ * `NpTable` 全局默认配置
+ *
+ * 只挑出适合全局统一的字段；`api` / `columns` / `pagination` / `selection` /
+ * `operation` 的 `options` / `filters` / `search` / `slots` 等由使用场景决定，不开放。
+ */
+export interface NpTableConfigProps {
+  /** 行数据主键字段名 */
+  rowKey?: TableOption['rowKey']
+  /** 透传给 `n-data-table` 的属性 */
+  props?: TableOption['props']
+  /** 新增 / 编辑弹窗中表单的属性（`FormOption['props']`） */
+  formProps?: TableOption['formProps']
+  /** 每一列的默认配置 */
+  column?: NpTableColumnConfigProps
+  /** 操作列的默认配置 */
+  operation?: NpTableOperationConfigProps
 }

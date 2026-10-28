@@ -1,6 +1,10 @@
 import { NText } from 'naive-ui'
 import { describe, expect, test } from 'vitest'
-import { buildOperationOptions } from '../src/use-action-option'
+import {
+  buildOperationOptions,
+  createOperationDefaults,
+  mergeOperationDefaults,
+} from '../src/use-action-option'
 
 describe('buildOperationOptions', () => {
   test('returns default edit and delete options when no config is provided', () => {
@@ -66,5 +70,71 @@ describe('buildOperationOptions', () => {
 
     expect(options).toHaveLength(1)
     expect(options[0]).toMatchObject({ key: 'delete', disabled: true })
+  })
+
+  test('replaces the built-in options with defaultOptions', () => {
+    const options = buildOperationOptions(undefined, {}, 0, {
+      edit: { label: 'Edit', key: 'edit' },
+      del: { label: 'Delete', key: 'delete' },
+    })
+
+    expect(options).toHaveLength(2)
+    expect(options[0]).toMatchObject({ key: 'edit', label: 'Edit' })
+    expect(options[1]).toMatchObject({ key: 'delete', label: 'Delete' })
+  })
+
+  test('option fields take priority over defaultOptions', () => {
+    const options = buildOperationOptions(
+      [{ type: 'edit', label: '修改' }],
+      {},
+      0,
+      {
+        edit: { label: 'Edit', key: 'edit' },
+      }
+    )
+
+    expect(options[0]).toMatchObject({ key: 'edit', label: '修改' })
+  })
+
+  test('keeps the built-in key when defaultOptions only overrides part of fields', () => {
+    const options = buildOperationOptions(undefined, {}, 0, {
+      edit: { label: '修改' },
+    })
+
+    expect(options[0]).toMatchObject({ key: 'edit', label: '修改' })
+    expect(options[1]?.key).toBe('delete')
+  })
+
+  test('createOperationDefaults keeps the error style of the delete item', () => {
+    const defaults = createOperationDefaults({
+      editLabel: 'Edit',
+      delLabel: 'Delete',
+    })
+
+    expect(defaults.edit).toMatchObject({ key: 'edit', label: 'Edit' })
+
+    const deleteLabel = defaults.del?.label as () => ReturnType<typeof NText>
+    const vnode = deleteLabel()
+    expect(vnode.type).toBe(NText)
+    expect(vnode.props?.type).toBe('error')
+  })
+
+  test('mergeOperationDefaults merges each item by priority', () => {
+    const merged = mergeOperationDefaults(
+      createOperationDefaults({ editLabel: '编辑', delLabel: '删除' }),
+      { edit: { label: '修改' } },
+      { edit: { disabled: true }, del: { disabled: false } }
+    )
+
+    expect(merged.edit).toMatchObject({
+      key: 'edit',
+      label: '修改',
+      disabled: true,
+    })
+    expect(merged.del).toMatchObject({ key: 'delete', disabled: false })
+  })
+
+  test('mergeOperationDefaults skips empty sources', () => {
+    expect(mergeOperationDefaults(undefined, {})).toEqual({})
   })
 })

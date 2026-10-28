@@ -8,6 +8,7 @@ import { NpTable } from './np-table'
 import { NpFilter } from './np-filter'
 import { NpCell } from './np-cell'
 import { NpCellGroup } from './np-cell-group'
+import { NpConfigProvider } from './np-config-provider'
 
 export * from './np-button'
 export * from './np-checkbox'
@@ -18,7 +19,11 @@ export * from './np-table'
 export * from './np-filter'
 export * from './np-cell'
 export * from './np-cell-group'
+export * from './np-config-provider'
 
+export { npConfigProviderInjectionKey } from './config-provider'
+
+export * from './locale'
 export * from './types'
 export * from './utils'
 
@@ -32,6 +37,7 @@ const components = [
   NpFilter,
   NpCell,
   NpCellGroup,
+  NpConfigProvider,
 ]
 export const ComponentNames = components.map(item => item.name)
 

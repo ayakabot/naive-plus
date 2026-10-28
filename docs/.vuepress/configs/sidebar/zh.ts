@@ -19,6 +19,15 @@ export const zh: SidebarConfig = {
         { text: 'CellGroup 单元格组', link: '/components/np-cell-group/' },
       ],
     },
+    {
+      text: '全局配置',
+      children: [
+        {
+          text: 'ConfigProvider 全局配置',
+          link: '/components/np-config-provider/',
+        },
+      ],
+    },
   ],
   '/form': [
     {

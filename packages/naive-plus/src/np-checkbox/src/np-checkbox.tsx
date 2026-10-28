@@ -1,6 +1,8 @@
 import { defineComponent, ref, watch } from 'vue'
 import { useCreate } from '../../_hooks/create'
+import { useConfigProps } from '../../_hooks/config'
 import {
+  npCheckboxDefaults,
   npCheckboxProps,
   type CheckboxGroupValue,
   type CheckboxOption,
@@ -15,6 +17,11 @@ export default defineComponent({
   props: npCheckboxProps,
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    // prop > np-config-provider > 内置默认值
+    const merged = useConfigProps('Checkbox', props, npCheckboxDefaults, [
+      'props',
+    ])
+
     const data = ref<CheckboxGroupValue>(props.modelValue || [])
     watch(
       () => props.modelValue,
@@ -29,6 +36,7 @@ export default defineComponent({
     const handleChange = (value: CheckboxGroupValue) => {
       data.value = value
       emit('update:modelValue', value)
+      // 改变事件属于使用时的业务逻辑，只取组件自身的 props
       props.onChange?.(value)
     }
 
@@ -37,7 +45,7 @@ export default defineComponent({
       async () => {
         const timer = setTimeout(() => {
           loading.value = true
-        }, props.loadingDelay)
+        }, merged.value.loadingDelay)
         try {
           const res = await runAsync(props.options)
           return arrayTransferByKeys(res, {
@@ -58,7 +66,7 @@ export default defineComponent({
     return () => (
       <div class={bemClass.value} style={{ minHeight: '25.6px' }}>
         <NCheckboxGroup
-          {...props.props}
+          {...merged.value.props}
           value={data.value}
           onUpdateValue={handleChange}
         >

@@ -64,3 +64,15 @@ The component exports the following type definitions:
 ```ts
 import type { NpCheckboxProps } from 'naive-plus'
 ```
+
+## Global Defaults
+
+Use [NpConfigProvider](/en/components/np-config-provider/) to change the default `loadingDelay` and the `props` passed to `n-checkbox-group`. Props passed to the component itself always win.
+
+```vue
+<np-config-provider
+  :component-options="{ Checkbox: { loadingDelay: 500, props: { size: 'small' } } }"
+>
+  <np-checkbox v-model="value" :options="options" />
+</np-config-provider>
+```

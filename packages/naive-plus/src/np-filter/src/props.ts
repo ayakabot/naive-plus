@@ -34,7 +34,6 @@ export const npFilterProps = {
   },
   trigger: {
     type: String as PropType<'click' | 'hover'>,
-    default: 'click',
   },
   placement: {
     type: String as PropType<'left' | 'right'>,
@@ -46,3 +45,17 @@ export const npFilterProps = {
 }
 
 export type NpFilterProps = ExtractPropTypes<typeof npFilterProps>
+
+/**
+ * 组件内置默认值，可通过 np-config-provider 覆盖
+ */
+export const npFilterDefaults: Partial<NpFilterProps> = {
+  trigger: 'click',
+}
+
+/**
+ * `params` / `items`（数据）与 `onChange`（事件）不支持全局配置
+ */
+export type NpFilterConfigProps = Partial<
+  Pick<NpFilterProps, 'trigger' | 'placement'>
+>

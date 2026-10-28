@@ -1,4 +1,5 @@
 import { ref, type Ref } from 'vue'
+import { omit } from 'lodash-es'
 import type { TableColumn, TableOption } from './interface'
 import type { FormColumn } from '../../np-form'
 import type { AnyObject } from '../../types'
@@ -11,30 +12,90 @@ const MODE_PROPS_KEY = {
   edit: 'editProps',
 } as const satisfies Record<FormMode, string>
 
-const TITLE_MAP: Record<FormMode, string> = {
-  add: '新增',
-  edit: '编辑',
+/** 属于列自身的字段（内容 / 数据源 / 数据契约 / 状态 / 事件），不允许被全局默认配置覆盖 */
+const COLUMN_OWN_KEYS = [
+  'key',
+  'label',
+  'render',
+  'slots',
+  'options',
+  'rule',
+  'urlOnly',
+  'defaultValue',
+  'onChange',
+]
+
+/** 移除全局列表单配置中的列自身字段 */
+const omitColumnOwnKeys = (props: Partial<FormColumn>): Partial<FormColumn> =>
+  omit(props, COLUMN_OWN_KEYS)
+
+/**
+ * 清洗全局列表单配置：
+ * 去掉内容 / 数据源 / 数据契约 / 状态 / 事件字段（含 `addProps` / `editProps` 中的），
+ * 避免全局配置覆盖每一列自身的内容与行为
+ */
+const sanitizeColumnFormProps = (
+  props?: TableColumn['formProps']
+): TableColumn['formProps'] | undefined => {
+  if (!props) return undefined
+  const { addProps, editProps, ...base } = props
+  return {
+    ...omitColumnOwnKeys(base),
+    ...(addProps && { addProps: omitColumnOwnKeys(addProps) }),
+    ...(editProps && { editProps: omitColumnOwnKeys(editProps) }),
+  }
 }
 
-export const getFormTitle = (mode: FormMode): string => TITLE_MAP[mode]
+/** 需要一层合并（而非整体覆盖）的字段 */
+const MERGE_KEYS = ['props', 'formItemProps'] as const
+/** 按操作模式覆盖的字段，其内部同样需要一层合并 */
+const MODE_KEYS = ['addProps', 'editProps'] as const
+
+/**
+ * 合并全局与列自身的列表单配置，列自身优先级更高；
+ * `props` / `formItemProps`（含 `addProps` / `editProps` 中的）做一层合并，
+ * 避免列自身只写部分属性时丢掉全局默认值
+ */
+const mergeColumnFormProps = (
+  base?: TableColumn['formProps'],
+  override?: TableColumn['formProps']
+): TableColumn['formProps'] => {
+  const merged = { ...base, ...override } as AnyObject
+  MERGE_KEYS.forEach(key => {
+    if (base?.[key] || override?.[key]) {
+      merged[key] = { ...base?.[key], ...override?.[key] }
+    }
+  })
+  MODE_KEYS.forEach(key => {
+    if (base?.[key] || override?.[key]) {
+      merged[key] = mergeColumnFormProps(base?.[key], override?.[key])
+    }
+  })
+  return merged as TableColumn['formProps']
+}
 
 export const buildFormColumns = (
   columns: TableColumn[],
-  mode: FormMode
+  mode: FormMode,
+  columnFormProps?: TableColumn['formProps']
 ): FormColumn[] => {
+  // 全局默认配置优先级最低，且不覆盖列自身的内容字段
+  const globalFormProps = sanitizeColumnFormProps(columnFormProps)
+
   return columns
     .map(col => {
-      const { key, label, formProps = {} } = col
+      const { key, label } = col
       if (!col.formProps && !key) return null
 
+      const formProps = mergeColumnFormProps(globalFormProps, col.formProps)
       const modeKey = MODE_PROPS_KEY[mode] as keyof typeof formProps
       const { [modeKey]: modeProps = {}, ...baseFormProps } = formProps
 
+      // 模式专属配置与基础配置同样逐层合并，避免只写部分属性时丢掉基础配置
       const merged: FormColumn = {
         key,
         label,
-        ...baseFormProps,
-        ...modeProps,
+        ...mergeColumnFormProps(baseFormProps, modeProps),
       } as FormColumn
 
       if (merged.display === undefined) {
@@ -54,7 +115,9 @@ const buildAddInitData = (formColumns: FormColumn[]): AnyObject =>
 
 export const useCrud = (
   getOption: () => TableOption,
-  onRefresh: () => void
+  onRefresh: () => void,
+  /** 读取 np-config-provider 中所有列的默认表单属性 */
+  getColumnFormProps?: () => TableColumn['formProps']
 ) => {
   const dialogVisible = ref(false)
   const delVisible = ref(false)
@@ -96,7 +159,9 @@ export const useCrud = (
     crudMode.value = type
     formData.value =
       type === 'add'
-        ? buildAddInitData(buildFormColumns(option.columns, 'add'))
+        ? buildAddInitData(
+            buildFormColumns(option.columns, 'add', getColumnFormProps?.())
+          )
         : { ...data }
     dialogVisible.value = true
     return data

@@ -2,7 +2,7 @@
   <NPopover
     ref="popoverRef"
     :class="bemClass"
-    :trigger="props.trigger || 'click'"
+    :trigger="merged.trigger"
     :placement="placement"
   >
     <template #trigger>
@@ -50,7 +50,11 @@
         :class="`${bemClass}__category-item ${bemClass}__category-item-clear`"
         @click="handleClear"
       >
-        <NpCell label="清除所有筛选" size="small" :hover="true"></NpCell>
+        <NpCell
+          :label="locale.Filter.clearAllText"
+          size="small"
+          :hover="true"
+        ></NpCell>
       </div>
     </div>
   </NPopover>
@@ -59,7 +63,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useCreate } from '../../_hooks/create'
-import { npFilterProps, type NpFilterItem } from './props'
+import { useConfigProps, useLocale } from '../../_hooks/config'
+import { npFilterDefaults, npFilterProps, type NpFilterItem } from './props'
 import { NPopover, NDivider, type PopoverInst } from 'naive-ui'
 import { NpCell } from '../../np-cell'
 import { throttle } from 'lodash-es'
@@ -67,6 +72,10 @@ import FilterItem from './np-filter-item.vue'
 
 const { bemClass } = useCreate('np-filter')
 const props = defineProps(npFilterProps)
+// prop > np-config-provider > 内置默认值
+const merged = useConfigProps('Filter', props, npFilterDefaults)
+// np-config-provider 注入的文案
+const locale = useLocale()
 const emit = defineEmits(['update:params', 'change'])
 const popoverRef = ref<PopoverInst>()
 
@@ -110,16 +119,16 @@ const handleClear = () => {
 }
 
 const placement = computed(() => {
-  if (!props.placement) {
+  if (!merged.value.placement) {
     return 'bottom'
   }
-  return `bottom-${props.placement === 'right' ? 'start' : 'end'}`
+  return `bottom-${merged.value.placement === 'right' ? 'start' : 'end'}`
 })
 
 const secondPlacement = computed(() => {
-  if (!props.placement) {
+  if (!merged.value.placement) {
     return 'right-start'
   }
-  return `${props.placement}-start`
+  return `${merged.value.placement}-start`
 })
 </script>

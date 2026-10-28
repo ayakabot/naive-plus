@@ -33,3 +33,26 @@ Set `align="right"` to align the footer content to the end. The validation feedb
 | align | Footer content alignment; `right` aligns to the end and moves the validation feedback to the end as well | `'left' \| 'right'` | `'left'` |
 | prefixRender | Prefix render function | `(data)=>VNode` | - |
 | suffixRender | Suffix render function | `(data)=>VNode` | - |
+
+## Global Defaults
+
+`formItemProps` / `style` / `align` / `submitErrorFeedback` / `submitBtn` / `resetBtn` can be set globally through [NpConfigProvider](/en/components/np-config-provider/). The same config in `option.footer` takes priority, and `option.footer: false` still hides the whole footer.
+
+```vue
+<np-config-provider
+  :component-options="{
+    Form: {
+      footer: {
+        align: 'right',
+        submitBtn: { text: 'Save' },
+      },
+    },
+  }"
+>
+  <np-form :option="option" />
+</np-config-provider>
+```
+
+`prefixRender` / `suffixRender` are content render functions, specify them at the usage site.
+
+Button text priority: `submitBtn.text` / `resetBtn.text` > `componentOptions.Form.footer` of `NpConfigProvider` > the [locale](/en/components/np-config-provider/#locale) messages. Prefer `locale` when you need i18n.

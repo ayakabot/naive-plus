@@ -1,7 +1,10 @@
 import { computed, defineComponent, type PropType, type VNode } from 'vue'
 import { NButton, NDropdown, type DropdownOption } from 'naive-ui'
 import { buildOperationOptions } from './use-action-option'
-import type { TableOperationOptions } from './interface'
+import type {
+  TableOperationDefaultOptions,
+  TableOperationOptions,
+} from './interface'
 import IconMore from './icon/more.vue'
 
 const bemClass = 'np-table__operation'
@@ -25,6 +28,9 @@ export default defineComponent({
     options: {
       type: [Array, Function] as PropType<TableOperationOptions>,
     },
+    defaultOptions: {
+      type: Object as PropType<TableOperationDefaultOptions>,
+    },
     prefixRender: {
       type: Function as PropType<OperationRender>,
     },
@@ -37,7 +43,12 @@ export default defineComponent({
   },
   setup(props) {
     const dropdownOptions = computed<DropdownOption[]>(() =>
-      buildOperationOptions(props.options, props.rowData, props.rowIndex)
+      buildOperationOptions(
+        props.options,
+        props.rowData,
+        props.rowIndex,
+        props.defaultOptions
+      )
     )
 
     return () => (
