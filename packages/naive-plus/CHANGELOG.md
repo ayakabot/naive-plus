@@ -1,5 +1,17 @@
 # naive-plus
 
+## 0.1.0-beta.25
+
+### Minor Changes
+
+- [`aaf1e60`](https://github.com/seepine/naive-plus/commit/aaf1e60be852196cb59bb30f7afd491bf6673806) Thanks [@seepine](https://github.com/seepine)! - feat(np-form): add grid layout support
+
+- [`efae8b0`](https://github.com/seepine/naive-plus/commit/efae8b05da762294d7039658987cc9c72e1adfec) Thanks [@seepine](https://github.com/seepine)! - feat(config-provider): add NpConfigProvider for global component defaults and locale support
+
+### Patch Changes
+
+- [`3e3e5f1`](https://github.com/seepine/naive-plus/commit/3e3e5f198af7bc73b6250f0235c388a42e51486f) Thanks [@seepine](https://github.com/seepine)! - fix(np-table): hide empty state until first fetch settles to avoid flash
+
 ## 0.1.0-beta.24
 
 ### Patch Changes
