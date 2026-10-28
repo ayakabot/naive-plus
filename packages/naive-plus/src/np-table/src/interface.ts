@@ -31,9 +31,9 @@ export type TableColumn<T extends AnyObject = AnyObject> = {
    * 自定义表格渲染
    * @param rowData 行数据
    * @param rowIndex 行序号
-   * @returns VNode
+   * @returns VNodeChild
    */
-  render?: (rowData: any, rowIndex: number) => VNode
+  render?: (rowData: T, rowIndex: number) => VNodeChild
   /**
    * Naive Table Column Props 属性
    */
@@ -274,9 +274,12 @@ export type NpTableColumnFormConfigProps = ColumnFormPropsBase & {
   editProps?: ColumnFormPropsBase
 }
 
-export interface NpTableColumnConfigProps {
+export interface NpTableColumnConfigProps<T extends AnyObject = AnyObject> {
   /** 所有列默认的 naive-ui 列属性，列自身 `props` 优先级更高；`children` 属于列自身结构，不支持全局配置 */
-  props?: Omit<TableColumn['props'], 'children'>
+  props?: Omit<
+    NTableColumn<T>,
+    'key' | 'title' | 'render' | 'type' | 'children'
+  >
   /**
    * 所有列默认的表单属性（新增 / 编辑弹窗），列自身 `formProps` 优先级更高；
    * 列自身专属的字段（内容 / 数据源 / 数据契约 / 状态 / 事件）不支持全局配置，
@@ -287,8 +290,14 @@ export interface NpTableColumnConfigProps {
 
 /**
  * `NpTable` 操作列的全局默认配置
+ *
+ * 除 `key` / `title` / `render` / `type` 外，支持 `NTableColumn` 的全部属性
+ * （如 `width` / `align` / `fixed` / `ellipsis`），与 `TableOption['operation']` 保持一致
  */
-export interface NpTableOperationConfigProps {
+export type NpTableOperationConfigProps<T extends AnyObject = AnyObject> = Omit<
+  NTableColumn<T>,
+  'key' | 'title' | 'render' | 'type'
+> & {
   /** 操作列标题 */
   label?: string
   /** 内置编辑 / 删除操作项的默认配置 */
@@ -301,7 +310,7 @@ export interface NpTableOperationConfigProps {
  * 只挑出适合全局统一的字段；`api` / `columns` / `pagination` / `selection` /
  * `operation` 的 `options` / `filters` / `search` / `slots` 等由使用场景决定，不开放。
  */
-export interface NpTableConfigProps {
+export interface NpTableConfigProps<T extends AnyObject = AnyObject> {
   /** 行数据主键字段名 */
   rowKey?: TableOption['rowKey']
   /** 透传给 `n-data-table` 的属性 */
@@ -309,7 +318,7 @@ export interface NpTableConfigProps {
   /** 新增 / 编辑弹窗中表单的属性（`FormOption['props']`） */
   formProps?: TableOption['formProps']
   /** 每一列的默认配置 */
-  column?: NpTableColumnConfigProps
+  column?: NpTableColumnConfigProps<T>
   /** 操作列的默认配置 */
-  operation?: NpTableOperationConfigProps
+  operation?: NpTableOperationConfigProps<T>
 }
