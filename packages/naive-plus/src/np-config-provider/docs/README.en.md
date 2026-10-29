@@ -81,6 +81,7 @@ Only display-related props are exposed (`Button` is the exception: all props exc
 | -------------------- | -------------------------------------------------------------- | --------------------------- |
 | label | Title of the operation column, defaults to `Table.operation.label` in the locale | `string` |
 | defaultOptions | Default config of the built-in edit / delete items, merged into the built-in defaults item by item | `TableOperationDefaultOptions` |
+| others | `NTableColumn` props except `key` / `title` / `render` / `type` (e.g. `width` / `align` / `fixed` / `ellipsis`), used as the defaults of the operation column | `Omit<NTableColumn<T>, 'key' \| 'title' \| 'render' \| 'type'>` |
 
 > The same config in `option.operation` takes priority; `option.operation: false` still hides the whole operation column.
 
